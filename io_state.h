@@ -4,11 +4,8 @@
 #include <Arduino.h>
 
 #include "io_util.h"
-#include "instrument/io_audio_bass.h"
 
 enum { VIEW_BASS, VIEW_COUNT };
-
-IO_AudioBass bass;
 
 byte currentView = VIEW_BASS;
 bool mcMode = false;

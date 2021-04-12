@@ -5,11 +5,11 @@
 #include <Audio.h>
 
 #include "../audio/audio_dumb.h"
-#include "io_audio_synth_wave.h"
-#include "effect/AudioEffectDistortion.h"
 #include "../audio/envelope.h"
-#include "io_util.h"
 #include "../audio/note.h"
+#include "effect/AudioEffectDistortion.h"
+#include "io_audio_synth_wave.h"
+#include "io_util.h"
 
 #define WAVEFORM_COUNT 9
 

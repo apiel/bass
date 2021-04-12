@@ -5,9 +5,9 @@
 #include <SD.h>
 
 #include "io_audio.h"
-#include "instrument/io_audio_bass.h"
 #include "io_config.h"
 #include "io_display.h"
+#include "io_instrument.h"
 #include "io_midi.h"
 #include "io_state.h"
 

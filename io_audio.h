@@ -5,7 +5,7 @@
 #include <Audio.h>
 
 #include "instrument/io_audio_bass.h"
-#include "io_state.h"
+#include "io_instrument.h"
 
 AudioOutputMQS audioOut;
 AudioConnection patchCordBass(bass, audioOut);
