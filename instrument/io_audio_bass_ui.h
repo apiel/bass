@@ -18,11 +18,14 @@ class IO_AudioBassUI : public IO_AudioBass {
         d->setCursor(0, 0);
 
         d->printf("%s\n", getWave(currentWave[0]));
-        d->printf("%.1fHz %d%%\n", frequency[0], (int)(amplitude[0] * 100));
+        d->printf("%.1fHz %d%%\n", frequency[0], (int)(amplitude[0] * 100.0));
+        d->printf("%d|%d|%d%%|%d\n", (int)adsr[0][0], (int)adsr[0][1],
+                  (int)(adsr[0][2] * 100.0), (int)adsr[0][3]);
 
         d->printf("%s\n", getWave(currentWave[1]));
-        d->printf("%.1fHz %d%%\n", frequency[1], (int)(amplitude[1] * 100));
-
+        d->printf("%.1fHz %d%%\n", frequency[1], (int)(amplitude[1] * 100.0));
+        d->printf("%d|%d|%d%%|%d\n", (int)adsr[1][0], (int)adsr[1][1],
+                  (int)(adsr[1][2] * 100.0), (int)adsr[1][3]);
 
         // if (mcMode) {
         //     if (modulationOn) {
@@ -95,98 +98,86 @@ class IO_AudioBassUI : public IO_AudioBass {
         if (channel == 11) {
             if (knob == 1) {
                 if (mcMode) {
-                    // setModLevel(0, direction);
+                    setCurrentFilter(direction);
                 } else {
                     setNextWave(0, direction);
                 }
             } else if (knob == 2) {
                 if (mcMode) {
-                    // setModLevel(1, direction);
+                    setFilterFrequency(direction);
                 } else {
                     setFrequency(0, direction);
                 }
             } else if (knob == 3) {
                 if (mcMode) {
-                    // setModLevel(2, direction);
+                    setFilterResonance(direction);
                 } else {
                     setAmplitude(0, direction);
                 }
             } else if (knob == 4) {
                 if (mcMode) {
-                    // setModLevel(3, direction);
                 } else {
                 }
             } else if (knob == 5) {
                 if (mcMode) {
-                    // setModLevel(4, direction);
                 } else {
+                    setAttack(0, direction);
                 }
             } else if (knob == 6) {
                 if (mcMode) {
-                    // setModLevel(5, direction);
                 } else {
-                    // waveform.setStart(direction);
+                    setDecay(0, direction);
                 }
             } else if (knob == 7) {
                 if (mcMode) {
-                    // setModLevel(6, direction);
+                    setDistortion(direction);
                 } else {
-                    // setAttack(direction);
+                    setSustain(0, direction);
                 }
             } else if (knob == 8) {
                 if (mcMode) {
-                    // setModLevel(7, direction);
+                    setDistortionRange(direction);
                 } else {
-                    // setDecay(direction);
+                    setRelease(0, direction);
                 }
             } else if (knob == 11) {
                 if (mcMode) {
-                    // setModMs(0, direction);
                 } else {
-                    // setCurrentFilter(direction);
                     setNextWave(1, direction);
                 }
             } else if (knob == 12) {
                 if (mcMode) {
-                    // setModMs(1, direction);
                 } else {
-                    // setFilterFrequency(direction);
                     setFrequency(1, direction);
                 }
             } else if (knob == 13) {
                 if (mcMode) {
-                    // setModMs(2, direction);
                 } else {
-                    // setFilterResonance(direction);
                     setAmplitude(1, direction);
                 }
             } else if (knob == 14) {
                 if (mcMode) {
-                    // setModMs(3, direction);
                 } else {
                 }
             } else if (knob == 15) {
                 if (mcMode) {
-                    // setModMs(4, direction);
                 } else {
+                    setAttack(1, direction);
                 }
             } else if (knob == 16) {
                 if (mcMode) {
-                    // setModMs(5, direction);
                 } else {
-                    // setDistortion(direction);
+                    setDecay(1, direction);
                 }
             } else if (knob == 17) {
                 if (mcMode) {
-                    // setModMs(6, direction);
                 } else {
-                    // setDistortionRange(direction);
+                    setSustain(1, direction);
                 }
             } else if (knob == 0) {  // 0 for 18
                 if (mcMode) {
-                    // setModMs(7, direction);
                 } else {
-                    // setBitcrusher(direction);
+                    setRelease(1, direction);
                 }
             }
         }

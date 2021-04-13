@@ -146,7 +146,7 @@ class IO_AudioBass : public AudioDumb {
     }
 
     void setSustain(byte n, int8_t direction) {
-        adsr[n][2] = constrain(adsr[n][2] + direction, 0.0, 1.0);
+        adsr[n][2] = pctAdd(adsr[n][2], direction);
         env[n].sustain(adsr[n][2]);
     }
 
