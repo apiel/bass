@@ -36,7 +36,7 @@ class IO_AudioBass : public AudioDumb {
     byte currentFilter = 0;
 
     byte currentWave[2] = {WAVEFORM_SINE, WAVEFORM_SAWTOOTH};
-    float frequency[2] = {220.0, 220.0};
+    float frequency[2] = {120.0, 125.0};
     float amplitude[2] = {1.0, 1.0};
 
     AudioConnection* patchCordWaveToEnv[2];
@@ -66,7 +66,7 @@ class IO_AudioBass : public AudioDumb {
         initWave(0);
         initWave(1);
 
-        distortion.distortion(0.0);
+        distortion.distortion(0.5);
     }
 
     void initWave(byte i) {
