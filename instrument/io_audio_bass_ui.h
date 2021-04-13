@@ -27,6 +27,11 @@ class IO_AudioBassUI : public IO_AudioBass {
         d->printf("%d|%d|%d%%|%d\n", (int)adsr[1][0], (int)adsr[1][1],
                   (int)(adsr[1][2] * 100.0), (int)adsr[1][3]);
 
+        d->printf("%s %.1fHz %.1f\n", getFilter(currentFilter), filterFrequency,
+                  filterResonance);
+        d->printf("Dist %d range %d\n", (int)distortion.amount,
+                  (int)distortion.range);
+
         // if (mcMode) {
         //     if (modulationOn) {
         //         addToCursor(d, 0, 4);
