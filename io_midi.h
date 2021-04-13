@@ -3,11 +3,10 @@
 
 #include <Arduino.h>
 
-#include "io_audio.h"
+#include "io_instrument.h"
 #include "io_display.h"
 #include "io_midi_core.h"
 #include "io_midi_default.h"
-#include "io_midi_bass.h"
 #include "io_midi_util.h"
 
 void noteOnHandler(byte channel, byte note, byte velocity) {
@@ -23,7 +22,7 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
 
     if (!defaultNoteOnHandler(channel, note, velocity)) {
         if (currentView == VIEW_BASS) {
-            kickNoteOnHandler(channel, note, velocity);
+            bass.noteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -38,7 +37,7 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (currentView == VIEW_BASS) {
-        kickNoteOffHandler(channel, note, velocity);
+        bass.noteOffHandler(channel, note, velocity);
     }
     displayUpdate();
 }
@@ -56,7 +55,7 @@ void controlChangeHandler(byte channel, byte control, byte value) {
 
     int8_t direction = getKnobDirection(knob, value);
     if (currentView == VIEW_BASS) {
-        kickControlChangeHandler(channel, knob, direction);
+        bass.controlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }

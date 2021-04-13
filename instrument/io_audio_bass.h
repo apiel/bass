@@ -5,11 +5,10 @@
 #include <Audio.h>
 
 #include "../audio/audio_dumb.h"
-#include "io_audio_synth_wave.h"
-#include "effect/AudioEffectDistortion.h"
-#include "../audio/envelope.h"
-#include "io_util.h"
 #include "../audio/note.h"
+#include "../wavetable/guitar01.h"
+#include "effect/AudioEffectDistortion.h"
+#include "io_util.h"
 
 #define WAVEFORM_COUNT 9
 
@@ -20,113 +19,85 @@
 class IO_AudioBass : public AudioDumb {
    protected:
    public:
-    IO_AudioSynthWave waveform;
-    Envelope<2> env;
+    AudioSynthWaveform wave[2];
+    AudioEffectEnvelope env[2];
     AudioFilterStateVariable filter;
-    AudioSynthWaveformDc dc;
-    Envelope<8> envMod;
-    AudioEffectBitcrusher bitcrusher;
     AudioEffectDistortion distortion;
-    AudioEffectRectifier rectifier;
 
-    bool modulationOn = true;
+    AudioMixer4 mixer;
 
     byte lastNote = 0;
 
-    float attackMs = 10.0;
-    float decayMs = 240.0;
-
-    float modMs[MOD_ENV_SIZE] = {5.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 5.0};
-    float modLevel[MOD_ENV_SIZE] = {1.0, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1, 0.0};
+    float adsr[2][4] = {{10.0, 50.0, 1.0, 50.0}, {10.0, 50.0, 1.0, 50.0}};
 
     float filterFrequency = 200.0;
     float filterOctaveControl = 1.0;
     float filterResonance = 0.7;
     byte currentFilter = 0;
 
-    byte xcrushBits = 12;
-    bool rectifierOn = false;
+    byte currentWave[2] = {WAVEFORM_SINE, WAVEFORM_SAWTOOTH};
+    float frequency[2] = {220.0, 220.0};
+    float amplitude[2] = {1.0, 1.0};
 
+    AudioConnection* patchCordWaveToEnv[2];
+    AudioConnection* patchCordEnvToMixer[2];
+    AudioConnection* patchCordMixerToFilter;
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
-    AudioConnection* patchCordEnvToFilter;
-    AudioConnection* patchCordWaveToEnv;
-    AudioConnection* patchCordDcToEnvMod;
-    AudioConnection* patchCordEnvModToWave;
-    AudioConnection* patchCordBitcrusher;
-    AudioConnection* patchCordDistortionToRectifier;
     AudioConnection* patchCordDistortionToOutput;
-    AudioConnection* patchCordRectifier;
+
+    Guitar01 table;
 
     IO_AudioBass() {
-        patchCordDcToEnvMod = new AudioConnection(dc, envMod);
-        patchCordEnvModToWave = new AudioConnection(envMod, waveform.input);
-        patchCordWaveToEnv = new AudioConnection(waveform, env);
-        patchCordEnvToFilter = new AudioConnection(env, filter);
-        patchCordFilter[0] = new AudioConnection(filter, 0, bitcrusher, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, bitcrusher, 0);
-        patchCordFilter[2] = new AudioConnection(filter, 2, bitcrusher, 0);
-        patchCordBitcrusher = new AudioConnection(bitcrusher, distortion);
-        patchCordDistortionToRectifier =
-            new AudioConnection(distortion, rectifier);
+        patchCordWaveToEnv[0] = new AudioConnection(wave[0], env[0]);
+        patchCordWaveToEnv[1] = new AudioConnection(wave[1], env[1]);
+        patchCordEnvToMixer[0] = new AudioConnection(env[0], mixer);
+        patchCordEnvToMixer[1] = new AudioConnection(env[1], 0, mixer, 1);
+        patchCordMixerToFilter = new AudioConnection(mixer, filter);
+        patchCordFilter[0] = new AudioConnection(filter, 0, distortion, 0);
+        patchCordFilter[1] = new AudioConnection(filter, 1, distortion, 0);
+        patchCordFilter[2] = new AudioConnection(filter, 2, distortion, 0);
         patchCordDistortionToOutput = new AudioConnection(distortion, *this);
-        patchCordRectifier = new AudioConnection(rectifier, *this);
-
-        env.set(1, 1.0, attackMs);
-        env.set(2, 0.0, decayMs);
 
         setCurrentFilter(0);
         filter.frequency(filterFrequency);
         filter.resonance(filterResonance);
         filter.octaveControl(filterOctaveControl);
 
-        dc.amplitude(0.5);
+        initWave(0);
+        initWave(1);
 
-        for (byte n = 0; n < MOD_ENV_SIZE; n++) {
-            envMod.set(n + 1, modLevel[n], modMs[n]);
-        }
+        distortion.distortion(0.0);
+    }
 
-        setBitcrusher(0);
-        applyRectifier();
-        applyModulation();
+    void initWave(byte i) {
+        env[i].hold(0);
+        env[i].attack(adsr[i][0]);
+        env[i].decay(adsr[i][1]);
+        env[i].sustain(adsr[i][2]);
+        env[i].release(adsr[i][3]);
+
+        wave[i].frequency(frequency[i]);
+        wave[i].amplitude(amplitude[i]);
+        wave[i].arbitraryWaveform(table.table, 172.0);
+        wave[i].begin(currentWave[i]);
     }
 
     void init() {}
 
-    void toggleRectifier() {
-        rectifierOn = !rectifierOn;
-        applyRectifier();
+    void setNextWave(byte n, int8_t direction) {
+        currentWave[n] = mod(currentWave[n] + direction, WAVEFORM_COUNT);
+        wave[n].begin(currentWave[n]);
     }
 
-    void applyRectifier() {
-        patchCordDistortionToRectifier->disconnect();
-        patchCordDistortionToOutput->disconnect();
-        patchCordRectifier->disconnect();
-        if (rectifierOn) {
-            patchCordDistortionToRectifier->connect();
-            patchCordRectifier->connect();
-        } else {
-            patchCordDistortionToOutput->connect();
-        }
+    void setFrequency(byte n, int8_t direction) {
+        frequency[n] =
+            constrain(frequency[n] + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
+        wave[n].frequency(frequency[n]);
     }
 
-    void toggleModulation() {
-        modulationOn = !modulationOn;
-        applyModulation();
-    }
-
-    void applyModulation() {
-        if (modulationOn) {
-            patchCordDcToEnvMod->connect();
-            patchCordEnvModToWave->connect();
-        } else {
-            patchCordDcToEnvMod->disconnect();
-            patchCordEnvModToWave->disconnect();
-        }
-    }
-
-    void setBitcrusher(int8_t direction) {
-        xcrushBits = constrain(xcrushBits + direction, 1, 16);
-        bitcrusher.bits(xcrushBits);
+    void setAmplitude(byte n, int8_t direction) {
+        amplitude[n] = pctAdd(amplitude[n], direction);
+        wave[n].amplitude(amplitude[n]);
     }
 
     void setDistortion(int8_t direction) {
@@ -137,21 +108,6 @@ class IO_AudioBass : public AudioDumb {
     void setDistortionRange(int8_t direction) {
         float range = constrain(distortion.range + direction, 1, 1000);
         distortion.setRange(range);
-    }
-
-    void setModMs(byte state, int8_t direction) {
-        if (modulationOn) {
-            modMs[state] = constrain(modMs[state] + direction, 0.0, 11880.0);
-            envMod.set(state + 1, modLevel[state], modMs[state]);
-        }
-    }
-
-    void setModLevel(byte state, int8_t direction) {
-        if (modulationOn) {
-            modLevel[state] =
-                constrain(modLevel[state] + direction * 0.01, 0.0, 1.0);
-            envMod.set(state + 1, modLevel[state], modMs[state]);
-        }
     }
 
     void setCurrentFilter(int8_t direction) {
@@ -179,16 +135,24 @@ class IO_AudioBass : public AudioDumb {
         filter.octaveControl(filterOctaveControl);
     }
 
-    void setAttack(int8_t direction) {
-        attackMs = constrain(attackMs + direction, 0, 11880);
-        // env.attack(attackMs);
-        env.set(1, 1.0, attackMs);
+    void setAttack(byte n, int8_t direction) {
+        adsr[n][0] = constrain(adsr[n][0] + direction, 0.0, 11880.0);
+        env[n].attack(adsr[n][0]);
     }
 
-    void setDecay(int8_t direction) {
-        decayMs = constrain(decayMs + direction, 0, 11880);
-        // env.decay(decayMs);
-        env.set(2, 0.0, decayMs);
+    void setDecay(byte n, int8_t direction) {
+        adsr[n][1] = constrain(adsr[n][1] + direction, 0.0, 11880.0);
+        env[n].decay(adsr[n][1]);
+    }
+
+    void setSustain(byte n, int8_t direction) {
+        adsr[n][2] = constrain(adsr[n][2] + direction, 0.0, 1.0);
+        env[n].sustain(adsr[n][2]);
+    }
+
+    void setRelease(byte n, int8_t direction) {
+        adsr[n][3] = constrain(adsr[n][3] + direction, 0.0, 11880.0);
+        env[n].release(adsr[n][3]);
     }
 
     void noteOn() { noteOn(_C4, 127); }
@@ -202,12 +166,15 @@ class IO_AudioBass : public AudioDumb {
         // // this is not ok :p
         // // waveform.setAmplitude(_amp);
         // // waveform.setFrequency(_freq);
-        envMod.noteOn();
-        env.noteOn();
+        env[0].noteOn();
+        env[1].noteOn();
     }
 
-    void noteOff() {}
-    void noteOff(byte note) {}
+    void noteOff() { noteOff(_C4); }
+    void noteOff(byte note) {
+        env[0].noteOff();
+        env[1].noteOff();
+    }
 };
 
 #endif
