@@ -7,7 +7,7 @@
 #include "../io_util.h"
 #include "./audio_dumb.h"
 
-#define FILTER_TYPE_COUNT 3
+#define FILTER_TYPE_COUNT 4
 
 const static uint32_t PROGMEM FILTERFREQS256[256] = {
     20,    21,    22,    23,    24,    26,    27,    28,    29,    31,    32,
@@ -55,9 +55,11 @@ const static float POWER[128] = {
 
 class AudioFilter : public AudioDumb {
    private:
+    AudioMixer4 mixer;
     AudioFilterStateVariable filter;
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
     AudioConnection* patchCordInput;
+    AudioConnection* patchCordOutput;
 
    public:
     AudioDumb input;
@@ -69,9 +71,11 @@ class AudioFilter : public AudioDumb {
 
     AudioFilter() {
         patchCordInput = new AudioConnection(input, filter);
-        patchCordFilter[0] = new AudioConnection(filter, 0, *this, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, *this, 0);
-        patchCordFilter[2] = new AudioConnection(filter, 2, *this, 0);
+        patchCordFilter[0] = new AudioConnection(filter, 0, mixer, 0);
+        patchCordFilter[1] = new AudioConnection(filter, 1, mixer, 1);
+        patchCordFilter[2] = new AudioConnection(filter, 2, mixer, 2);
+        patchCordFilter[3] = new AudioConnection(input, 0, mixer, 3);
+        patchCordOutput = new AudioConnection(mixer, *this);
 
         setCurrentFilter(0);
         setFilterFrequency(0);
@@ -80,9 +84,26 @@ class AudioFilter : public AudioDumb {
 
     void setCurrentFilter(int8_t direction) {
         currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
-        // as only the last connected is the one used
-        // https://www.pjrc.com/teensy/td_libs_AudioConnection.html
-        patchCordFilter[currentFilter]->connect();
+
+        mixer.gain(0, 0.0);
+        mixer.gain(1, 0.0);
+        mixer.gain(2, 0.0);
+        mixer.gain(3, 0.0);
+
+        switch (currentFilter) {
+            case 0:
+                mixer.gain(0, 1.0);
+                break;
+            case 1:
+                mixer.gain(1, 1.0);
+                break;
+            case 2:
+                mixer.gain(2, 1.0);
+                break;
+            default:
+                mixer.gain(3, 1.0);
+                break;
+        }
     }
 
     void setFilterFrequency(int8_t direction) {

@@ -9,6 +9,8 @@ const char* getFilter(byte w) {
             return "BandP";
         case 2:
             return "HighP";
+        case 3:
+            return "None";
     }
     return "??";
 }
