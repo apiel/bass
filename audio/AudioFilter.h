@@ -56,18 +56,25 @@ const static float POWER[128] = {
 class AudioFilter : public AudioDumb {
    private:
     AudioMixer4 mixer;
+    AudioSynthWaveformDc dc;
     AudioFilterStateVariable filter;
     AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
     AudioConnection* patchCordInput;
     AudioConnection* patchCordOutput;
+    AudioConnection* patchCordDcToEnv;
+    AudioConnection* patchCordEnvToFilter;
 
    public:
     AudioDumb input;
+    AudioEffectEnvelope env;
+
+    float adsr[4] = {0.0, 0.0, 1.0, 0.0};
 
     byte filterFrequencyPos = 90;
     float filterFrequency = 0.0;
     byte filterResonance = 0;
     byte currentFilter = 0;
+    float dcValue = 0.0;
 
     AudioFilter() {
         patchCordInput = new AudioConnection(input, filter);
@@ -77,9 +84,20 @@ class AudioFilter : public AudioDumb {
         patchCordFilter[3] = new AudioConnection(input, 0, mixer, 3);
         patchCordOutput = new AudioConnection(mixer, *this);
 
+        patchCordDcToEnv = new AudioConnection(dc, env);
+        patchCordEnvToFilter = new AudioConnection(env, 0, filter, 1);
+
         setCurrentFilter(0);
         setFilterFrequency(0);
         setFilterResonance(0);
+
+        env.hold(0);
+        env.attack(adsr[0]);
+        env.decay(adsr[1]);
+        env.sustain(adsr[2]);
+        env.release(adsr[3]);
+
+        dc.amplitude(dcValue);
     }
 
     void setCurrentFilter(int8_t direction) {
@@ -129,6 +147,31 @@ class AudioFilter : public AudioDumb {
     void setFilterResonance(int8_t direction) {
         filterResonance = constrain(filterResonance + direction, 0, 127);
         filter.resonance((13.9f * POWER[filterResonance]) + 1.1f);
+    }
+
+    void setDc(int8_t direction) {
+        dcValue = pctAdd(dcValue, direction);
+        dc.amplitude(dcValue);
+    }
+
+    void setAttack(int8_t direction) {
+        adsr[0] = constrain(adsr[0] + direction, 0.0, 11880.0);
+        env.attack(adsr[0]);
+    }
+
+    void setDecay(int8_t direction) {
+        adsr[1] = constrain(adsr[1] + direction, 0.0, 11880.0);
+        env.decay(adsr[1]);
+    }
+
+    void setSustain(int8_t direction) {
+        adsr[2] = pctAdd(adsr[2], direction);
+        env.sustain(adsr[2]);
+    }
+
+    void setRelease(int8_t direction) {
+        adsr[3] = constrain(adsr[3] + direction, 0.0, 11880.0);
+        env.release(adsr[3]);
     }
 };
 

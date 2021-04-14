@@ -131,12 +131,14 @@ class IO_AudioBass : public AudioDumb {
         // // waveform.setFrequency(_freq);
         env[0].noteOn();
         env[1].noteOn();
+        filter.env.noteOn();
     }
 
     void noteOff() { noteOff(_C4); }
     void noteOff(byte note) {
         env[0].noteOff();
         env[1].noteOff();
+        filter.env.noteOff();
     }
 };
 
