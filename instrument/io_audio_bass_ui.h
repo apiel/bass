@@ -27,8 +27,8 @@ class IO_AudioBassUI : public IO_AudioBass {
         d->printf("%d|%d|%d%%|%d\n", (int)adsr[1][0], (int)adsr[1][1],
                   (int)(adsr[1][2] * 100.0), (int)adsr[1][3]);
 
-        d->printf("%s %.1fHz %.1f\n", getFilter(currentFilter), filterFrequency,
-                  filterResonance);
+        d->printf("%s %.1fHz %d\n", getFilter(filter.currentFilter),
+                  filter.filterFrequency, filter.filterResonance);
         d->printf("Dist %d range %d\n", (int)distortion.amount,
                   (int)distortion.range);
     }
@@ -65,19 +65,19 @@ class IO_AudioBassUI : public IO_AudioBass {
         if (channel == 11) {
             if (knob == 1) {
                 if (mcMode) {
-                    setCurrentFilter(direction);
+                    filter.setCurrentFilter(direction);
                 } else {
                     setNextWave(0, direction);
                 }
             } else if (knob == 2) {
                 if (mcMode) {
-                    setFilterFrequency(direction);
+                    filter.setFilterFrequency(direction);
                 } else {
                     setFrequency(0, direction);
                 }
             } else if (knob == 3) {
                 if (mcMode) {
-                    setFilterResonance(direction);
+                    filter.setFilterResonance(direction);
                 } else {
                     setAmplitude(0, direction);
                 }

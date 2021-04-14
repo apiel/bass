@@ -5,14 +5,14 @@
 #include <Audio.h>
 
 #include "../audio/audio_dumb.h"
+#include "../audio/AudioFilter.h"
 #include "../audio/note.h"
+#include "../io_util.h"
 #include "../wavetable/guitar01.h"
 #include "effect/AudioEffectDistortion.h"
-#include "io_util.h"
 
 #define WAVEFORM_COUNT 9
 
-#define FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
 #define MOD_ENV_SIZE 8
 
@@ -21,19 +21,14 @@ class IO_AudioBass : public AudioDumb {
    public:
     AudioSynthWaveform wave[2];
     AudioEffectEnvelope env[2];
-    AudioFilterStateVariable filter;
     AudioEffectDistortion distortion;
+    AudioFilter filter;
 
     AudioMixer4 mixer;
 
     byte lastNote = 0;
 
     float adsr[2][4] = {{10.0, 50.0, 1.0, 50.0}, {10.0, 50.0, 1.0, 50.0}};
-
-    float filterFrequency = 200.0;
-    float filterOctaveControl = 1.0;
-    float filterResonance = 0.7;
-    byte currentFilter = 0;
 
     byte currentWave[2] = {WAVEFORM_SINE, WAVEFORM_SAWTOOTH};
     float frequency[2] = {120.0, 125.0};
@@ -42,7 +37,7 @@ class IO_AudioBass : public AudioDumb {
     AudioConnection* patchCordWaveToEnv[2];
     AudioConnection* patchCordEnvToMixer[2];
     AudioConnection* patchCordMixerToFilter;
-    AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
+    AudioConnection* patchCordFilterToDistortion;
     AudioConnection* patchCordDistortionToOutput;
 
     Guitar01 table;
@@ -52,16 +47,9 @@ class IO_AudioBass : public AudioDumb {
         patchCordWaveToEnv[1] = new AudioConnection(wave[1], env[1]);
         patchCordEnvToMixer[0] = new AudioConnection(env[0], mixer);
         patchCordEnvToMixer[1] = new AudioConnection(env[1], 0, mixer, 1);
-        patchCordMixerToFilter = new AudioConnection(mixer, filter);
-        patchCordFilter[0] = new AudioConnection(filter, 0, distortion, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, distortion, 0);
-        patchCordFilter[2] = new AudioConnection(filter, 2, distortion, 0);
+        patchCordMixerToFilter = new AudioConnection(mixer, filter.input);
+        patchCordFilterToDistortion = new AudioConnection(filter, distortion);
         patchCordDistortionToOutput = new AudioConnection(distortion, *this);
-
-        setCurrentFilter(0);
-        filter.frequency(filterFrequency);
-        filter.resonance(filterResonance);
-        filter.octaveControl(filterOctaveControl);
 
         initWave(0);
         initWave(1);
@@ -108,31 +96,6 @@ class IO_AudioBass : public AudioDumb {
     void setDistortionRange(int8_t direction) {
         float range = constrain(distortion.range + direction, 1, 1000);
         distortion.setRange(range);
-    }
-
-    void setCurrentFilter(int8_t direction) {
-        currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
-        // as only the last connected is the one used
-        // https://www.pjrc.com/teensy/td_libs_AudioConnection.html
-        patchCordFilter[currentFilter]->connect();
-    }
-
-    void setFilterFrequency(int8_t direction) {
-        filterFrequency = constrain(filterFrequency + direction, 0,
-                                    AUDIO_SAMPLE_RATE_EXACT / 2);
-        filter.frequency(filterFrequency);
-    }
-
-    void setFilterResonance(int8_t direction) {
-        filterResonance =
-            constrain(filterResonance + direction * 0.1, 0.7, 5.0);
-        filter.resonance(filterResonance);
-    }
-
-    void setFilterOctaveControl(int8_t direction) {
-        filterOctaveControl =
-            constrain(filterOctaveControl + direction * 0.1, 0.0, 7.0);
-        filter.octaveControl(filterOctaveControl);
     }
 
     void setAttack(byte n, int8_t direction) {
