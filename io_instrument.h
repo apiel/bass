@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-#include "instrument/io_audio_bass_ui.h"
+#include "instrument/synth/io_audio_synth.h"
 
-IO_AudioBassUI bass;
+IO_AudioSynth synth;
 
 #endif

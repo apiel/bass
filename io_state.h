@@ -5,9 +5,9 @@
 
 #include "io_util.h"
 
-enum { VIEW_BASS, VIEW_COUNT };
+enum { VIEW_SYNTH, VIEW_COUNT };
 
-byte currentView = VIEW_BASS;
+byte currentView = VIEW_SYNTH;
 bool mcMode = false;
 bool sdAvailable = true;
 

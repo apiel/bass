@@ -21,8 +21,8 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (!defaultNoteOnHandler(channel, note, velocity)) {
-        if (currentView == VIEW_BASS) {
-            bass.noteOnHandler(channel, note, velocity);
+        if (currentView == VIEW_SYNTH) {
+            synth.noteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -36,8 +36,8 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    if (currentView == VIEW_BASS) {
-        bass.noteOffHandler(channel, note, velocity);
+    if (currentView == VIEW_SYNTH) {
+        synth.noteOffHandler(channel, note, velocity);
     }
     displayUpdate();
 }
@@ -54,8 +54,8 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     Serial.println(value, DEC);
 
     int8_t direction = getKnobDirection(knob, value);
-    if (currentView == VIEW_BASS) {
-        bass.controlChangeHandler(channel, knob, direction);
+    if (currentView == VIEW_SYNTH) {
+        synth.controlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }

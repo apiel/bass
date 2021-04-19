@@ -41,8 +41,8 @@ void displayUpdate() {
     if (millis() - lastDisplayUpdate >= 50) {
         needDisplayUpdate = false;
         lastDisplayUpdate = millis();
-        if (currentView == VIEW_BASS) {
-            bass.display(&display);
+        if (currentView == VIEW_SYNTH) {
+            synth.display(&display);
         }
         display.display();
     } else {

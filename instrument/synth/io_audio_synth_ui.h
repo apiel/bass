@@ -1,41 +1,41 @@
-#ifndef IO_AUDIO_BASS_UI_H_
-#define IO_AUDIO_BASS_UI_H_
+#ifndef IO_AUDIO_SYNTH_CORE_UI_H_
+#define IO_AUDIO_SYNTH_CORE_UI_H_
 
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../io_display_util.h"
-#include "../io_midi_util.h"
-#include "../io_state.h"
-#include "io_audio_bass.h"
-#include "io_display_helper.h"
+#include "../../io_display_util.h"
+#include "../../io_midi_util.h"
+#include "../../io_state.h"
+#include "../io_display_helper.h"
+#include "./io_audio_synth_core.h"
 
-class IO_AudioBassUI : public IO_AudioBass {
+class IO_AudioSynthCoreUI {
+   private:
+    IO_AudioSynthCore* core;
+
    public:
+    IO_AudioSynthCoreUI(IO_AudioSynthCore* _core) { core = _core; }
+
     void display(Adafruit_SSD1306* d) {
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s %.1fHz\n", getWave(currentWave[0]), frequency[0]);
-        d->printf("%d%% %d|%d|%d%%|%d\n", (int)(amplitude[0] * 100.0),
-                  (int)adsr[0][0], (int)adsr[0][1], (int)(adsr[0][2] * 100.0),
-                  (int)adsr[0][3]);
+        d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
+        d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
+                  (int)core->adsr[0], (int)core->adsr[1],
+                  (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
 
         addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz\n", getWave(currentWave[1]), frequency[1]);
-        d->printf("%d%% %d|%d|%d%%|%d\n", (int)(amplitude[1] * 100.0),
-                  (int)adsr[1][0], (int)adsr[1][1], (int)(adsr[1][2] * 100.0),
-                  (int)adsr[1][3]);
-
-        addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz %d\n", getFilter(filter.currentFilter),
-                  filter.filterFrequency, filter.filterResonance);
-        d->printf("%.1f %d|%d|%d%%|%d\n", filter.dcValue, (int)filter.adsr[0],
-                  (int)filter.adsr[1], (int)(filter.adsr[2] * 100.0),
-                  (int)filter.adsr[3]);
-        d->printf("Dist %d range %d\n", (int)distortion.amount,
-                  (int)distortion.range);
+        d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
+                  core->filter.filterFrequency, core->filter.filterResonance);
+        d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
+                  (int)core->filter.adsr[0], (int)core->filter.adsr[1],
+                  (int)(core->filter.adsr[2] * 100.0),
+                  (int)core->filter.adsr[3]);
+        d->printf("Dist %d range %d\n", (int)core->distortion.amount,
+                  (int)core->distortion.range);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
@@ -44,7 +44,7 @@ class IO_AudioBassUI : public IO_AudioBass {
             if (key != 255) {
                 // currentkick = key;
             } else if (note == 22 || note == 46) {
-                noteOn();
+                core->noteOn();
             } else if (note == 23 || note == 47) {
                 // savekick(currentkick);
             } else if (note == 20) {
@@ -61,7 +61,7 @@ class IO_AudioBassUI : public IO_AudioBass {
     void noteOffHandler(byte channel, byte note, byte velocity) {
         if (channel == 11) {
             if (note == 22 || note == 46) {
-                noteOff();
+                core->noteOff();
             }
         }
     }
@@ -70,67 +70,64 @@ class IO_AudioBassUI : public IO_AudioBass {
         if (channel == 11) {
             if (knob == 1) {
                 if (mcMode) {
-                    filter.setCurrentFilter(direction);
+                    core->filter.setCurrentFilter(direction);
                 } else {
-                    setNextWave(0, direction);
+                    core->setNextWave(direction);
                 }
             } else if (knob == 2) {
                 if (mcMode) {
-                    filter.setFilterFrequency(direction);
+                    core->filter.setFilterFrequency(direction);
                 } else {
-                    setFrequency(0, direction);
+                    core->setFrequency(direction);
                 }
             } else if (knob == 3) {
                 if (mcMode) {
-                    filter.setFilterResonance(direction);
+                    core->filter.setFilterResonance(direction);
                 } else {
-                    setAmplitude(0, direction);
+                    core->setAmplitude(direction);
                 }
             } else if (knob == 4) {
                 if (mcMode) {
-                    filter.setDc(direction);
+                    core->filter.setDc(direction);
                 } else {
                 }
             } else if (knob == 5) {
                 if (mcMode) {
-                    filter.setAttack(direction);
+                    core->filter.setAttack(direction);
                 } else {
-                    setAttack(0, direction);
+                    core->setAttack(direction);
                 }
             } else if (knob == 6) {
                 if (mcMode) {
-                    filter.setDecay(direction);
+                    core->filter.setDecay(direction);
                 } else {
-                    setDecay(0, direction);
+                    core->setDecay(direction);
                 }
             } else if (knob == 7) {
                 if (mcMode) {
-                    filter.setSustain(direction);
+                    core->filter.setSustain(direction);
                 } else {
-                    setSustain(0, direction);
+                    core->setSustain(direction);
                 }
             } else if (knob == 8) {
                 if (mcMode) {
-                    filter.setRelease(direction);
+                    core->filter.setRelease(direction);
                 } else {
-                    setRelease(0, direction);
+                    core->setRelease(direction);
                 }
             } else if (knob == 11) {
                 if (mcMode) {
-                    setDistortion(direction);
+                    core->setDistortion(direction);
                 } else {
-                    setNextWave(1, direction);
                 }
             } else if (knob == 12) {
                 if (mcMode) {
-                    setDistortionRange(direction);
+                    core->setDistortionRange(direction);
                 } else {
-                    setFrequency(1, direction);
                 }
             } else if (knob == 13) {
                 if (mcMode) {
                 } else {
-                    setAmplitude(1, direction);
                 }
             } else if (knob == 14) {
                 if (mcMode) {
@@ -139,22 +136,18 @@ class IO_AudioBassUI : public IO_AudioBass {
             } else if (knob == 15) {
                 if (mcMode) {
                 } else {
-                    setAttack(1, direction);
                 }
             } else if (knob == 16) {
                 if (mcMode) {
                 } else {
-                    setDecay(1, direction);
                 }
             } else if (knob == 17) {
                 if (mcMode) {
                 } else {
-                    setSustain(1, direction);
                 }
             } else if (knob == 0) {  // 0 for 18
                 if (mcMode) {
                 } else {
-                    setRelease(1, direction);
                 }
             }
         }

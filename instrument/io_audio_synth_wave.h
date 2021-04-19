@@ -5,7 +5,7 @@
 #include <Audio.h>
 
 #include "../audio/audio_dumb.h"
-#include "io_util.h"
+#include "../io_util.h"
 #include "../audio/note.h"
 #include "../wavetable/AudioWaveTable256.h"
 #include "../wavetable/AudioWaveTableBig.h"
