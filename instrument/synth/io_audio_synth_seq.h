@@ -4,20 +4,16 @@
 #include <Arduino.h>
 
 #include "../../Pattern.h"
-#include "./io_audio_synth_core.h"
 #include "../../io_pattern_storage.h"
+#include "./io_audio_synth_core.h"
 
 class IO_AudioSynthSeq {
    private:
     IO_AudioSynthCore* core;
     // should it be a pointer or a copy?
-    Pattern* pattern;
     byte currentStep = 0;
     Step lastStep;
     bool active = false;
-
-    byte currentPattern = 0;
-    byte currentStepSelection = 0;
 
     void nextOff() {
         if (lastStep.duration == 0) {
@@ -27,11 +23,13 @@ class IO_AudioSynthSeq {
     }
 
    public:
+    byte currentPattern = 0;
+    byte currentStepSelection = 0;
+    Pattern* pattern;
+
     IO_AudioSynthSeq(IO_AudioSynthCore* _core) { core = _core; }
 
-    void init() {
-        setCurrentPattern(0);
-    }
+    void init() { setCurrentPattern(0); }
 
     void setCurrentPattern(int8_t direction) {
         currentPattern += direction;

@@ -12,6 +12,9 @@
 
 class IO_AudioSynth : public IO_AudioSynthCore {
    protected:
+    enum { VIEW_CORE, VIEW_SEQ, VIEW_COUNT };
+    byte currentView = VIEW_CORE;
+
    public:
     IO_AudioSynthCoreUI* coreUI;
     IO_AudioSynthSeq* seq;
@@ -25,10 +28,30 @@ class IO_AudioSynth : public IO_AudioSynthCore {
 
     void init() { seq->init(); }
 
-    void display(Adafruit_SSD1306* d) { coreUI->display(d); }
+    void display(Adafruit_SSD1306* d) {
+        switch (currentView) {
+            case VIEW_SEQ:
+                seqUI->display(d);
+                break;
+
+            default:
+                coreUI->display(d);
+                break;
+        }
+    }
+
+    void setCurrentView(int8_t direction) {
+        currentView = mod(currentView + direction, VIEW_COUNT);
+    }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
-        coreUI->noteOnHandler(channel, note, velocity);
+        if (note == 18 || note == 42) {
+            setCurrentView(-1);
+        } else if (note == 19 || note == 43) {
+            setCurrentView(1);
+        } else {
+            coreUI->noteOnHandler(channel, note, velocity);
+        }
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity) {
