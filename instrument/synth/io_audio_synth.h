@@ -42,6 +42,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
 
     void setCurrentView(int8_t direction) {
         currentView = mod(currentView + direction, VIEW_COUNT);
+        // Serial.printf("Current view %d\n", currentView);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
