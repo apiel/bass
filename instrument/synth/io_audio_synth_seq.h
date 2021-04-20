@@ -13,7 +13,6 @@ class IO_AudioSynthSeq {
     // should it be a pointer or a copy?
     byte currentStep = 0;
     Step lastStep;
-    bool active = false;
 
     void nextOff() {
         if (lastStep.duration == 0) {
@@ -23,6 +22,7 @@ class IO_AudioSynthSeq {
     }
 
    public:
+    bool active = false;
     byte currentPattern = 0;
     byte currentStepSelection = 0;
     Pattern* pattern;

@@ -68,7 +68,15 @@ class IO_AudioSynth : public IO_AudioSynthCore {
     }
 
     void controlChangeHandler(byte channel, byte knob, int8_t direction) {
-        coreUI->controlChangeHandler(channel, knob, direction);
+        switch (currentView) {
+            case VIEW_SEQ:
+                seqUI->controlChangeHandler(channel, knob, direction);
+                break;
+
+            case VIEW_CORE:
+                coreUI->controlChangeHandler(channel, knob, direction);
+                break;
+        }
     }
 };
 

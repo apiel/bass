@@ -55,6 +55,12 @@ class IO_AudioSynthSeqUI {
 
         d->printf("%03d %s\n", seq->currentPattern, seq->pattern->name);
 
+        if (seq->active) {
+            d->fillTriangle(120, 0, 126, 3, 120, 7, WHITE);
+        } else {
+            d->fillRect(120, 1, 6, 6, WHITE);
+        }
+
         Step* step = &seq->pattern->steps[seq->currentStepSelection];
         d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
                   step->slide ? 1 : 0);
@@ -70,6 +76,74 @@ class IO_AudioSynthSeqUI {
         if (channel == 11) {
             if (note == 22 || note == 46) {
                 seq->toggle();
+            }
+        }
+    }
+
+    void controlChangeHandler(byte channel, byte knob, int8_t direction) {
+        if (channel == 11) {
+            if (knob == 1) {
+                seq->setCurrentPattern(direction);
+            } else if (knob == 2) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 3) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 4) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 5) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 6) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 7) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 8) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 11) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 12) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 13) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 14) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 15) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 16) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 17) {
+                if (mcMode) {
+                } else {
+                }
+            } else if (knob == 0) {  // 0 for 18
+                if (mcMode) {
+                } else {
+                }
             }
         }
     }
