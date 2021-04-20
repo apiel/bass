@@ -9,6 +9,7 @@
 #include "io_display.h"
 #include "io_instrument.h"
 #include "io_midi.h"
+#include "io_pattern_storage.h"
 #include "io_state.h"
 
 void ioSynthInit() {
@@ -24,7 +25,7 @@ void ioSynthInit() {
         sdAvailable = false;
     }
 
-    // delay(2000);
+    initPatternStorage();
     audioInit();
     midiInit();
 
