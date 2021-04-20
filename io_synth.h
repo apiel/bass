@@ -10,6 +10,7 @@
 #include "io_instrument.h"
 #include "io_midi.h"
 #include "io_pattern_storage.h"
+#include "io_sequencer.h"
 #include "io_state.h"
 
 void ioSynthInit() {
@@ -25,9 +26,10 @@ void ioSynthInit() {
         sdAvailable = false;
     }
 
-    initPatternStorage();
+    patternStorageInit();
     audioInit();
     midiInit();
+    sequencerInit();
 
     displayUpdate();
 }
@@ -36,6 +38,7 @@ unsigned long last_time = millis();
 void ioSynthLoop() {
     midiLoop();
     displayLoop();
+    sequencerLoop();
 
     if (true) {
         if (millis() - last_time >= 5000) {

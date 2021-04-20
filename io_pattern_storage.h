@@ -71,7 +71,7 @@ bool savePattern(byte patternPos) {
     return false;
 }
 
-void initPatternStorage() {
+void patternStorageInit() {
     for (uint16_t pos = 0; pos < PATTERN_COUNT; pos++) {
         loadPattern(pos);
     }

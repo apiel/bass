@@ -51,7 +51,15 @@ class IO_AudioSynth : public IO_AudioSynthCore {
         } else if (note == 19 || note == 43) {
             setCurrentView(1);
         } else {
-            coreUI->noteOnHandler(channel, note, velocity);
+            switch (currentView) {
+                case VIEW_SEQ:
+                    seqUI->noteOnHandler(channel, note, velocity);
+                    break;
+
+                case VIEW_CORE:
+                    coreUI->noteOnHandler(channel, note, velocity);
+                    break;
+            }
         }
     }
 

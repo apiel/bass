@@ -65,6 +65,14 @@ class IO_AudioSynthSeqUI {
         }
         resetFont(d);
     }
+
+    void noteOnHandler(byte channel, byte note, byte velocity) {
+        if (channel == 11) {
+            if (note == 22 || note == 46) {
+                seq->toggle();
+            }
+        }
+    }
 };
 
 #endif
