@@ -3,11 +3,12 @@
 
 #include <Arduino.h>
 
-#include "io_instrument.h"
 #include "io_display.h"
+#include "io_instrument.h"
 #include "io_midi_core.h"
 #include "io_midi_default.h"
 #include "io_midi_util.h"
+#include "io_view.h"
 
 void noteOnHandler(byte channel, byte note, byte velocity) {
     // When a USB device with multiple virtual cables is used,
@@ -21,8 +22,8 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     Serial.println(velocity, DEC);
 
     if (!defaultNoteOnHandler(channel, note, velocity)) {
-        if (currentView == VIEW_SYNTH) {
-            synth.noteOnHandler(channel, note, velocity);
+        if (isSynthView()) {
+            getSynth()->noteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -36,8 +37,8 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    if (currentView == VIEW_SYNTH) {
-        synth.noteOffHandler(channel, note, velocity);
+    if (isSynthView()) {
+        getSynth()->noteOffHandler(channel, note, velocity);
     }
     displayUpdate();
 }
@@ -54,8 +55,8 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     Serial.println(value, DEC);
 
     int8_t direction = getKnobDirection(knob, value);
-    if (currentView == VIEW_SYNTH) {
-        synth.controlChangeHandler(channel, knob, direction);
+    if (isSynthView()) {
+        getSynth()->controlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }

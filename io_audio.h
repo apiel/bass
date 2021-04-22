@@ -7,11 +7,13 @@
 #include "io_instrument.h"
 
 AudioOutputMQS audioOut;
-AudioConnection patchCordSynth(synth, audioOut);
+AudioConnection patchCordSynth(synth[SYNTH_0], audioOut);
 
 void audioInit() {
     AudioMemory(25);
-    synth.init();
+    for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
+        synth[pos].init();
+    }
 }
 
 #endif

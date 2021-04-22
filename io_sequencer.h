@@ -25,10 +25,9 @@ void sequencerInit() { setTempo(0); }
 void sequencerLoop() {
     if (timer.check() == 1) {
         timer.reset();
-        // for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
-        //     synth[pos].next();
-        // }
-        synth.seq->next();
+        for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
+            synth[pos].seq->next();
+        }
     }
 }
 
