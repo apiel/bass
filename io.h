@@ -13,7 +13,7 @@
 #include "io_sequencer.h"
 #include "io_state.h"
 
-void ioSynthInit() {
+void ioInit() {
     // // to comment out
     // while (!Serial)
     //     ;
@@ -35,7 +35,7 @@ void ioSynthInit() {
 }
 
 unsigned long last_time = millis();
-void ioSynthLoop() {
+void ioLoop() {
     midiLoop();
     displayLoop();
     sequencerLoop();

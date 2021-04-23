@@ -1,10 +1,10 @@
-#include <io_synth.h>
+#include <io.h>
 
 void setup() {
     Serial.begin(115200);
-    ioSynthInit();
+    ioInit();
 }
 
 void loop() {
-    ioSynthLoop();
+    ioLoop();
 }

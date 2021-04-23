@@ -3,6 +3,7 @@
 
 - fix kick filter
 - fix kick wave
+    -> also use default wave form for 256
 - set another path for kick pattern
 
 - main view
