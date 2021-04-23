@@ -20,6 +20,7 @@ void setKickViewPos(byte pos) {
 }
 
 void setSynthViewPos(byte pos) {
+    Serial.println("setSynthViewPos");
     currentView = pos + KICK_COUNT;
 }
 

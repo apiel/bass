@@ -22,6 +22,7 @@ class IO_AudioKickCore : public AudioDumb {
    public:
     IO_AudioSynthWave waveform;
     Envelope<2> env;
+    // ToDo fix filter
     AudioFilterStateVariable filter;
     AudioSynthWaveformDc dc;
     Envelope<8> envMod;
@@ -30,8 +31,6 @@ class IO_AudioKickCore : public AudioDumb {
     AudioEffectRectifier rectifier;
 
     bool modulationOn = true;
-
-    byte lastNote = 0;
 
     float attackMs = 10.0;
     float decayMs = 240.0;
@@ -192,15 +191,6 @@ class IO_AudioKickCore : public AudioDumb {
     void noteOn() { noteOn(_C4, 127); }
 
     void noteOn(byte note, byte velocity) {
-        Serial.println("kick noteOn");
-        // lastNote = note;
-
-        // float _freq = waveform.frequency + NOTE_FREQ[note] - NOTE_FREQ[_C4];
-        // float _amp = waveform.amplitude * velocity / 127;
-
-        // // this is not ok :p
-        // // waveform.setAmplitude(_amp);
-        // // waveform.setFrequency(_freq);
         envMod.noteOn();
         env.noteOn();
     }

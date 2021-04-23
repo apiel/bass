@@ -28,6 +28,9 @@ void sequencerLoop() {
         for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
             synth[pos].seq->next();
         }
+        for (byte pos = 0; pos < KICK_COUNT; pos++) {
+            kick[pos].seq->next();
+        }
     }
 }
 
