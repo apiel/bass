@@ -19,12 +19,6 @@ class IO_AudioBase {
     IO_AudioSeq<AudioCore>* seq;
     IO_AudioSeqUI<AudioCore>* seqUI;
 
-    // IO_AudioBase() {
-    //     coreUI = new AudioCoreUI(this);
-    //     seq = new IO_AudioSeq<AudioCore>(this);
-    //     seqUI = new IO_AudioSeqUI<AudioCore>(seq);
-    // }
-
     void init() { seq->init(); }
 
     void display(Adafruit_SSD1306* d) {

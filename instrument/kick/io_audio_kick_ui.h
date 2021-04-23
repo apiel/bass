@@ -72,7 +72,7 @@ class IO_AudioKickCoreUI {
             byte key = getItemKey(note);
             if (key != 255) {
                 // currentkick = key;
-            } else if (note == 22 || note == 46) {
+            } else if (note == 21 || note == 45) {
                 core->noteOn();
             } else if (note == 23 || note == 47) {
                 // savekick(currentkick);
