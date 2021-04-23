@@ -7,26 +7,26 @@
 #include "io_instrument.h"
 #include "io_util.h"
 
-// enum { VIEW_SYNTH, VIEW_COUNT };
-// #define MAIN_VIEW_COUNT SYNTH_COUNT + KICK_VIEW
-#define MAIN_VIEW_COUNT 6
+#define MAIN_VIEW_COUNT (SYNTH_COUNT + KICK_COUNT)
 
-// byte currentView = SYNTH_0;
 byte currentView = 0;
 
 void setCurrentView(int8_t direction) {
     currentView = mod(currentView + direction, MAIN_VIEW_COUNT);
 }
 
-void setCurrentViewPos(byte pos) {
+void setKickViewPos(byte pos) {
     currentView = pos;
 }
 
-// ToDo to be fixed
-bool isSynthView() { return false; }
-bool isKickView() { return true; }
+void setSynthViewPos(byte pos) {
+    currentView = pos + KICK_COUNT;
+}
 
-IO_AudioSynth* getSynth() { return &synth[currentView]; }
+bool isKickView() { return currentView < KICK_COUNT; }
+bool isSynthView() { return !isKickView(); }
+
+IO_AudioSynth* getSynth() { return &synth[currentView - KICK_COUNT]; }
 IO_AudioKick* getKick() { return &kick[currentView]; }
 
 #endif

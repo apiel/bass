@@ -13,7 +13,7 @@
 
 #define WAVEFORM_COUNT 9
 
-#define FILTER_TYPE_COUNT 3
+#define KICK_FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
 #define MOD_ENV_SIZE 8
 
@@ -47,7 +47,7 @@ class IO_AudioKickCore : public AudioDumb {
     byte xcrushBits = 12;
     bool rectifierOn = false;
 
-    AudioConnection* patchCordFilter[FILTER_TYPE_COUNT];
+    AudioConnection* patchCordFilter[KICK_FILTER_TYPE_COUNT];
     AudioConnection* patchCordEnvToFilter;
     AudioConnection* patchCordWaveToEnv;
     AudioConnection* patchCordDcToEnvMod;
@@ -153,7 +153,7 @@ class IO_AudioKickCore : public AudioDumb {
     }
 
     void setCurrentFilter(int8_t direction) {
-        currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
+        currentFilter = mod(currentFilter + direction, KICK_FILTER_TYPE_COUNT);
         // as only the last connected is the one used
         // https://www.pjrc.com/teensy/td_libs_AudioConnection.html
         patchCordFilter[currentFilter]->connect();
@@ -192,6 +192,7 @@ class IO_AudioKickCore : public AudioDumb {
     void noteOn() { noteOn(_C4, 127); }
 
     void noteOn(byte note, byte velocity) {
+        Serial.println("kick noteOn");
         // lastNote = note;
 
         // float _freq = waveform.frequency + NOTE_FREQ[note] - NOTE_FREQ[_C4];

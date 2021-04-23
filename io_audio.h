@@ -19,7 +19,7 @@ AudioConnection patchCordSynth3(synth[SYNTH_3], 0, mixerSynth, 3);
 
 AudioConnection patchCordMixerKick(mixerKick, audioOut);
 AudioConnection patchCordKick0(kick[KICK_0], mixerKick);
-AudioConnection patchCordkick1(kick[KICK_0], 0, mixerKick, 1);
+AudioConnection patchCordkick1(kick[KICK_1], 0, mixerKick, 1);
 
 void audioInit() {
     AudioMemory(25);
