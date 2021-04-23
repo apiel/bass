@@ -49,17 +49,19 @@ class IO_AudioSynthSeqUI {
         seq = _seq;
     }
 
-    void display(Adafruit_SSD1306* d) {
-        d->clearDisplay();
-        d->setCursor(0, 0);
-
-        d->printf("%03d %s\n", seq->currentPattern, seq->pattern->name);
-
+    void displayPlayingStatus(Adafruit_SSD1306* d) {
         if (seq->active) {
             d->fillTriangle(120, 0, 126, 3, 120, 7, WHITE);
         } else {
             d->fillRect(120, 1, 6, 6, WHITE);
         }
+    }
+
+    void display(Adafruit_SSD1306* d) {
+        d->clearDisplay();
+        d->setCursor(0, 0);
+
+        d->printf("%03d %s\n", seq->currentPattern, seq->pattern->name);
 
         Step* step = &seq->pattern->steps[seq->currentStepSelection];
         d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
@@ -74,9 +76,9 @@ class IO_AudioSynthSeqUI {
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
         if (channel == 11) {
-            if (note == 22 || note == 46) {
-                seq->toggle();
-            }
+            // if (note == 22 || note == 46) {
+            //     seq->toggle();
+            // }
         }
     }
 

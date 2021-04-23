@@ -38,6 +38,8 @@ class IO_AudioSynth : public IO_AudioSynthCore {
                 coreUI->display(d);
                 break;
         }
+        // display playing status on all the views
+        seqUI->displayPlayingStatus(d);
     }
 
     void setCurrentView(int8_t direction) {
@@ -50,6 +52,8 @@ class IO_AudioSynth : public IO_AudioSynthCore {
             setCurrentView(-1);
         } else if (note == 19 || note == 43) {
             setCurrentView(1);
+        } else if (note == 22 || note == 46) {
+            seq->toggle();
         } else {
             switch (currentView) {
                 case VIEW_SEQ:

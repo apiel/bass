@@ -43,7 +43,7 @@ class IO_AudioSynthCoreUI {
             byte key = getItemKey(note);
             if (key != 255) {
                 // currentkick = key;
-            } else if (note == 22 || note == 46) {
+            } else if (note == 21 || note == 45) {
                 core->noteOn();
             } else if (note == 23 || note == 47) {
                 // savekick(currentkick);
@@ -60,7 +60,7 @@ class IO_AudioSynthCoreUI {
 
     void noteOffHandler(byte channel, byte note, byte velocity) {
         if (channel == 11) {
-            if (note == 22 || note == 46) {
+            if (note == 21 || note == 45) {
                 core->noteOff();
             }
         }
