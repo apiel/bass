@@ -1,15 +1,15 @@
-#ifndef IO_AUDIO_SYNTH_SEQ_H_
-#define IO_AUDIO_SYNTH_SEQ_H_
+#ifndef IO_AUDIO_SEQ_H_
+#define IO_AUDIO_SEQ_H_
 
 #include <Arduino.h>
 
-#include "../../Pattern.h"
-#include "../../io_pattern_storage.h"
-#include "./io_audio_synth_core.h"
+#include "../Pattern.h"
+#include "../io_pattern_storage.h"
 
-class IO_AudioSynthSeq {
+template<class AudioCore = void>
+class IO_AudioSeq {
    private:
-    IO_AudioSynthCore* core;
+    AudioCore* core;
     // should it be a pointer or a copy?
     byte currentStep = 0;
     Step lastStep;
@@ -27,7 +27,7 @@ class IO_AudioSynthSeq {
     byte currentStepSelection = 0;
     Pattern* pattern;
 
-    IO_AudioSynthSeq(IO_AudioSynthCore* _core) { core = _core; }
+    IO_AudioSeq(AudioCore* _core) { core = _core; }
 
     void init() { setCurrentPattern(0); }
 

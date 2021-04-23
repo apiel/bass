@@ -1,15 +1,15 @@
-#ifndef IO_AUDIO_KICK_H_
-#define IO_AUDIO_KICK_H_
+#ifndef IO_AUDIO_KICK_CORE_H_
+#define IO_AUDIO_KICK_CORE_H_
 
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../audio/audio_dumb.h"
-#include "../audio/envelope.h"
-#include "../audio/note.h"
-#include "effect/AudioEffectDistortion.h"
-#include "io_audio_synth_wave.h"
-#include "io_util.h"
+#include "../../audio/audio_dumb.h"
+#include "../../audio/envelope.h"
+#include "../../audio/note.h"
+#include "../../effect/AudioEffectDistortion.h"
+#include "../io_audio_synth_wave.h"
+#include "../../io_util.h"
 
 #define WAVEFORM_COUNT 9
 
@@ -17,7 +17,7 @@
 #define AUDIO_SYNTH_MOD 3
 #define MOD_ENV_SIZE 8
 
-class IO_AudioKick : public AudioDumb {
+class IO_AudioKickCore : public AudioDumb {
    protected:
    public:
     IO_AudioSynthWave waveform;
@@ -57,7 +57,7 @@ class IO_AudioKick : public AudioDumb {
     AudioConnection* patchCordDistortionToOutput;
     AudioConnection* patchCordRectifier;
 
-    IO_AudioKick() {
+    IO_AudioKickCore() {
         patchCordDcToEnvMod = new AudioConnection(dc, envMod);
         patchCordEnvModToWave = new AudioConnection(envMod, waveform.input);
         patchCordWaveToEnv = new AudioConnection(waveform, env);

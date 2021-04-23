@@ -1,18 +1,17 @@
-#ifndef IO_AUDIO_SYNTH_SEQ_UI_H_
-#define IO_AUDIO_SYNTH_SEQ_UI_H_
+#ifndef IO_AUDIO_SEQ_UI_H_
+#define IO_AUDIO_SEQ_UI_H_
 
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 
-#include "../../io_display_util.h"
-#include "./io_audio_synth_core.h"
-#include "./io_audio_synth_seq.h"
+#include "../io_display_util.h"
+#include "./io_audio_seq.h"
 #include "io_config.h"
 
-class IO_AudioSynthSeqUI {
+template<class AudioCore = void>
+class IO_AudioSeqUI {
    private:
-    IO_AudioSynthCore* core;
-    IO_AudioSynthSeq* seq;
+    IO_AudioSeq<AudioCore>* seq;
 
     void displayStep(Adafruit_SSD1306* d, Pattern* pPattern, byte pos) {
         byte topMargin = 18;
@@ -44,8 +43,7 @@ class IO_AudioSynthSeqUI {
     }
 
    public:
-    IO_AudioSynthSeqUI(IO_AudioSynthCore* _core, IO_AudioSynthSeq* _seq) {
-        core = _core;
+    IO_AudioSeqUI(IO_AudioSeq<AudioCore>* _seq) {
         seq = _seq;
     }
 
