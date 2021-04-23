@@ -90,8 +90,6 @@ class IO_AudioKickCore : public AudioDumb {
         applyModulation();
     }
 
-    void init() {}
-
     void toggleRectifier() {
         rectifierOn = !rectifierOn;
         applyRectifier();

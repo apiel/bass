@@ -24,6 +24,8 @@ void noteOnHandler(byte channel, byte note, byte velocity) {
     if (!defaultNoteOnHandler(channel, note, velocity)) {
         if (isSynthView()) {
             getSynth()->noteOnHandler(channel, note, velocity);
+        } else if (isKickView()) {
+            getKick()->noteOnHandler(channel, note, velocity);
         }
         displayUpdate();
     }
@@ -39,6 +41,8 @@ void noteOffHandler(byte channel, byte note, byte velocity) {
 
     if (isSynthView()) {
         getSynth()->noteOffHandler(channel, note, velocity);
+    } else if (isKickView()) {
+        getKick()->noteOffHandler(channel, note, velocity);
     }
     displayUpdate();
 }
@@ -57,6 +61,8 @@ void controlChangeHandler(byte channel, byte control, byte value) {
     int8_t direction = getKnobDirection(knob, value);
     if (isSynthView()) {
         getSynth()->controlChangeHandler(channel, knob, direction);
+    } else if (isKickView()) {
+        getKick()->controlChangeHandler(channel, knob, direction);
     }
     displayUpdate();
 }

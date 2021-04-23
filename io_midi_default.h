@@ -18,15 +18,22 @@ bool defaultNoteOnHandler(byte channel, byte note, byte velocity) {
         //     setCurrentView(1);
         //     return true;
     } else if (note == 8) {
-        setCurrentViewPos(SYNTH_0);
+        // todo to be fixed
+        setCurrentViewPos(KICK_0);
         return true;
     } else if (note == 9) {
-        setCurrentViewPos(SYNTH_1);
+        setCurrentViewPos(KICK_0);
         return true;
     } else if (note == 10) {
-        setCurrentViewPos(SYNTH_2);
+        setCurrentViewPos(SYNTH_0);
         return true;
     } else if (note == 11) {
+        setCurrentViewPos(SYNTH_1);
+        return true;
+    } else if (note == 12) {
+        setCurrentViewPos(SYNTH_2);
+        return true;
+    } else if (note == 13) {
         setCurrentViewPos(SYNTH_3);
         return true;
     }
