@@ -22,7 +22,7 @@ class IO_AudioKickCoreUI {
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s %s\n", core->waveform.isWave256() ? "#" : "~",
+        d->printf("%s %s\n", core->waveform.isWaveForm() ? "#" : "~",
                   core->waveform.waveName);
 
         if (mcMode) {

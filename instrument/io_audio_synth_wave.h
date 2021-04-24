@@ -7,14 +7,13 @@
 #include "../audio/audio_dumb.h"
 #include "../io_util.h"
 #include "../audio/note.h"
-#include "../wavetable/AudioWaveTable256.h"
-#include "../wavetable/AudioWaveTableBig.h"
+#include "../wavetable/AudioWaveTable.h"
 #include "../wavetable/AudioWaveTableList.h"
 
 class IO_AudioSynthWave : public AudioDumb {
    public:
-    AudioWaveTableBig waveBig;
-    AudioWaveTable256 wave256;
+    AudioWaveTable waveTable;
+    AudioSynthWaveformModulated waveForm;
     AudioWaveTableList waveList;
     AudioDumb input;
 
@@ -24,18 +23,18 @@ class IO_AudioSynthWave : public AudioDumb {
     float frequency = NOTE_FREQ[_C4];
     float amplitude = 1.0;
 
-    AudioConnection* patchCordInputToWaveBig;
-    AudioConnection* patchCordWaveBigToDumb;
+    AudioConnection* patchCordInputToWaveTable;
+    AudioConnection* patchCordWaveTableToDumb;
 
-    AudioConnection* patchCordInputToWave256;
-    AudioConnection* patchCordWave256ToDumb;
+    AudioConnection* patchCordInputToWaveForm;
+    AudioConnection* patchCordWaveFormToDumb;
 
     IO_AudioSynthWave() {
-        patchCordInputToWaveBig = new AudioConnection(input, waveBig);
-        patchCordWaveBigToDumb = new AudioConnection(waveBig, *this);
+        patchCordInputToWaveTable = new AudioConnection(input, waveTable);
+        patchCordWaveTableToDumb = new AudioConnection(waveTable, *this);
 
-        patchCordInputToWave256 = new AudioConnection(input, wave256);
-        patchCordWave256ToDumb = new AudioConnection(wave256, *this);
+        patchCordInputToWaveForm = new AudioConnection(input, waveForm);
+        patchCordWaveFormToDumb = new AudioConnection(waveForm, *this);
 
         setFrequency(0);
         setAmplitude(0);
@@ -47,44 +46,48 @@ class IO_AudioSynthWave : public AudioDumb {
         IO_AudioSynthWave();
     }
 
-    bool isWave256() { return currentWave < AUDIO_WAVETABLE_SIZE; }
+    bool isWaveForm() { return currentWave < AUDIO_WAVETABLE_SIZE; }
 
     IO_AudioSynthWave* setStart(int8_t direction) {
-        if (isWave256()) {
-            wave256.setStart(wave256.start + direction);
+        if (isWaveForm()) {
+            // waveForm.setStart(waveForm.start + direction);
         } else {
-            waveBig.setStart(waveBig.start + direction);
+            waveTable.setStart(waveTable.start + direction);
         }
         return this;
     }
 
-    uint32_t getStart() { return isWave256() ? wave256.start : waveBig.start; }
+    uint32_t getStart() { return isWaveForm() ?  0 /*waveForm.start*/ : waveTable.start; }
 
     IO_AudioSynthWave* setFrequency(int8_t direction) {
         frequency =
             constrain(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
-        wave256.setFrequency(frequency);
-        waveBig.setFrequency(frequency);
+        // waveForm.setFrequency(frequency);
+        waveForm.frequency(frequency);
+        waveTable.setFrequency(frequency);
         return this;
     }
 
     IO_AudioSynthWave* setAmplitude(int8_t direction) {
         amplitude = pctAdd(amplitude, direction);
-        wave256.setAmplitude(amplitude);
-        waveBig.setAmplitude(amplitude);
+        // waveForm.setAmplitude(amplitude);
+        waveForm.amplitude(amplitude);
+        waveTable.setAmplitude(amplitude);
         return this;
     }
 
     IO_AudioSynthWave* setNextWaveform(int8_t direction) {
         currentWave = mod(currentWave + direction, AUDIO_WAVETABLE_SIZE * 2);
-        if (isWave256()) {
+        if (isWaveForm()) {
             waveName = (char*)waveList.getTable(currentWave)->name;
-            wave256.setTable(waveList.getTable(currentWave)->table,
-                             waveList.getTable(currentWave)->size);
+            // waveForm.setTable(waveList.getTable(currentWave)->table,
+            //                  waveList.getTable(currentWave)->size);
+            waveForm.arbitraryWaveform(waveList.getTable(currentWave)->table, 172.0);
+            waveForm.begin(WAVEFORM_ARBITRARY);
         } else {
             uint16_t pos = currentWave - AUDIO_WAVETABLE_SIZE;
             waveName = (char*)waveList.getTable(pos)->name;
-            waveBig.setTable(waveList.getTable(pos)->table,
+            waveTable.setTable(waveList.getTable(pos)->table,
                              waveList.getTable(pos)->size);
         }
         applyCord();
@@ -94,16 +97,16 @@ class IO_AudioSynthWave : public AudioDumb {
    private:
     void applyCord() {
         // will use something else
-        if (isWave256()) {
-            patchCordInputToWaveBig->disconnect();
-            patchCordWaveBigToDumb->disconnect();
-            patchCordInputToWave256->connect();
-            patchCordWave256ToDumb->connect();
+        if (isWaveForm()) {
+            patchCordInputToWaveTable->disconnect();
+            patchCordWaveTableToDumb->disconnect();
+            patchCordInputToWaveForm->connect();
+            patchCordWaveFormToDumb->connect();
         } else {
-            patchCordInputToWave256->disconnect();
-            patchCordWave256ToDumb->disconnect();
-            patchCordInputToWaveBig->connect();
-            patchCordWaveBigToDumb->connect();
+            patchCordInputToWaveForm->disconnect();
+            patchCordWaveFormToDumb->disconnect();
+            patchCordInputToWaveTable->connect();
+            patchCordWaveTableToDumb->connect();
         }
     }
 };

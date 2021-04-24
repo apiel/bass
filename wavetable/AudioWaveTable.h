@@ -1,6 +1,6 @@
 
-#ifndef AudioWaveTableBig_h_
-#define AudioWaveTableBig_h_
+#ifndef AudioWaveTable_h_
+#define AudioWaveTable_h_
 
 #include <Arduino.h>
 #include <Audio.h>
@@ -11,11 +11,11 @@
 #include "wavetable/sine256.h"
 #include "wavetable/sine512.h"
 
-class AudioWaveTableBig : public AudioStream {
+class AudioWaveTable : public AudioStream {
    public:
     uint32_t start = 0;
 
-    AudioWaveTableBig(void) : AudioStream(2, inputQueueArray) {
+    AudioWaveTable(void) : AudioStream(2, inputQueueArray) {
         setFrequency(100.0);
         setAmplitude(1.0);
         // setTable(sine256, WAVETABLE_SINE256_SIZE);
@@ -24,14 +24,14 @@ class AudioWaveTableBig : public AudioStream {
         // setTable(guitar01, WAVETABLE_GUITAR06_SIZE);
     }
 
-    AudioWaveTableBig *setTable(const int16_t *wavetablePtr, u_int16_t size) {
+    AudioWaveTable *setTable(const int16_t *wavetablePtr, u_int16_t size) {
         wavetable = wavetablePtr;
         wavesize = size;
         start = 0;
         return this;
     }
 
-    AudioWaveTableBig *setFrequency(float freq) {
+    AudioWaveTable *setFrequency(float freq) {
         if (freq <= 0.0) {
             phase_increment = 0.0;
         } else {
@@ -40,12 +40,12 @@ class AudioWaveTableBig : public AudioStream {
         return this;
     }
 
-    AudioWaveTableBig *setAmplitude(float n) {  // 0 to 1.0
+    AudioWaveTable *setAmplitude(float n) {  // 0 to 1.0
         amplitude = constrain(n, 0.0, 1.0);
         return this;
     }
 
-    AudioWaveTableBig *frequencyModulation(float octaves) {
+    AudioWaveTable *frequencyModulation(float octaves) {
         if (octaves > 12.0) {
             octaves = 12.0;
         } else if (octaves < 0.1) {
@@ -55,7 +55,7 @@ class AudioWaveTableBig : public AudioStream {
         return this;
     }
 
-    AudioWaveTableBig *setStart(int val) {
+    AudioWaveTable *setStart(int val) {
         start = val < 0 ? 0 : val;
         return this;
     }

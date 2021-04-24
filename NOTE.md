@@ -1,3 +1,5 @@
+- use AudioSynthWaveformModulated in synth and modulation
+
 - use btn view in mc mode in pattern
 - pattern remove duration. only use slide/tie
 
@@ -12,3 +14,4 @@
     - volume
     - see playing insturment
     
+- project folder
