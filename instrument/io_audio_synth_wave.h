@@ -77,19 +77,22 @@ class IO_AudioSynthWave : public AudioDumb {
     }
 
     IO_AudioSynthWave* setNextWaveform(int8_t direction) {
-        currentWave = mod(currentWave + direction, (AUDIO_WAVETABLE_SIZE * 2) + WAVEFORM_COUNT);
+        currentWave = mod(currentWave + direction,
+                          (AUDIO_WAVETABLE_SIZE * 2) + WAVEFORM_COUNT);
         if (isWaveForm()) {
             waveForm.begin(currentWave);
+            Serial.printf("Set basic wave form %d\n", currentWave);
         } else if (isWaveArbitrary()) {
-            waveName =
-                (char*)waveList.getTable(currentWave - WAVEFORM_COUNT)->name;
-            waveForm.arbitraryWaveform(
-                waveList.getTable(currentWave - WAVEFORM_COUNT)->table, 172.0);
+            uint16_t pos = currentWave - WAVEFORM_COUNT;
+            waveName = (char*)waveList.getTable(pos)->name;
+            Serial.printf("Set arbitrary wave form %d %s\n", pos, waveName);
+            waveForm.arbitraryWaveform(waveList.getTable(pos)->table, 172.0);
             waveForm.begin(WAVEFORM_ARBITRARY);
         } else {
             uint16_t pos =
                 currentWave - (AUDIO_WAVETABLE_SIZE + WAVEFORM_COUNT);
             waveName = (char*)waveList.getTable(pos)->name;
+            Serial.printf("Set wave table %d %s\n", pos, waveName);
             waveTable.setTable(waveList.getTable(pos)->table,
                                waveList.getTable(pos)->size);
         }
@@ -100,7 +103,7 @@ class IO_AudioSynthWave : public AudioDumb {
    private:
     void applyCord() {
         // will use something else
-        if (isWaveForm()) {
+        if (isWaveForm() || isWaveArbitrary()) {
             patchCordInputToWaveTable->disconnect();
             patchCordWaveTableToDumb->disconnect();
             patchCordInputToWaveForm->connect();
