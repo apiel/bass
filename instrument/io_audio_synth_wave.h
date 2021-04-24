@@ -39,6 +39,9 @@ class IO_AudioSynthWave : public AudioDumb {
         setFrequency(0);
         setAmplitude(0);
         setNextWaveform(0);
+
+        waveForm.arbitraryWaveform(waveList.getTable(0)->table, 172.0);
+        waveForm.begin(0);
     }
 
     IO_AudioSynthWave(float freq) {
@@ -46,8 +49,12 @@ class IO_AudioSynthWave : public AudioDumb {
         IO_AudioSynthWave();
     }
 
-    bool isWaveForm() { return currentWave < AUDIO_WAVETABLE_SIZE; }
-    bool isWaveTable() { return !isWaveForm(); }
+    bool isWaveForm() { return currentWave < WAVEFORM_COUNT; }
+    bool isWaveArbitrary() {
+        return !isWaveForm() &&
+               currentWave < AUDIO_WAVETABLE_SIZE + WAVEFORM_COUNT;
+    }
+    bool isWaveTable() { return !isWaveForm() && !isWaveArbitrary(); }
 
     IO_AudioSynthWave* setStart(int8_t direction) {
         waveTable.setStart(waveTable.start + direction);
@@ -70,14 +77,18 @@ class IO_AudioSynthWave : public AudioDumb {
     }
 
     IO_AudioSynthWave* setNextWaveform(int8_t direction) {
-        currentWave = mod(currentWave + direction, AUDIO_WAVETABLE_SIZE * 2);
+        currentWave = mod(currentWave + direction, (AUDIO_WAVETABLE_SIZE * 2) + WAVEFORM_COUNT);
         if (isWaveForm()) {
-            waveName = (char*)waveList.getTable(currentWave)->name;
-            waveForm.arbitraryWaveform(waveList.getTable(currentWave)->table,
-                                       172.0);
+            waveForm.begin(currentWave);
+        } else if (isWaveArbitrary()) {
+            waveName =
+                (char*)waveList.getTable(currentWave - WAVEFORM_COUNT)->name;
+            waveForm.arbitraryWaveform(
+                waveList.getTable(currentWave - WAVEFORM_COUNT)->table, 172.0);
             waveForm.begin(WAVEFORM_ARBITRARY);
         } else {
-            uint16_t pos = currentWave - AUDIO_WAVETABLE_SIZE;
+            uint16_t pos =
+                currentWave - (AUDIO_WAVETABLE_SIZE + WAVEFORM_COUNT);
             waveName = (char*)waveList.getTable(pos)->name;
             waveTable.setTable(waveList.getTable(pos)->table,
                                waveList.getTable(pos)->size);

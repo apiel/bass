@@ -22,8 +22,13 @@ class IO_AudioKickCoreUI {
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s %s\n", core->waveform.isWaveForm() ? "#" : "~",
-                  core->waveform.waveName);
+        if (core->waveform.isWaveForm()) {
+            d->printf("%s\n", getWave(core->waveform.currentWave));
+        } else {
+            d->printf("%s %s\n",
+                      core->waveform.isWaveArbitrary() ? "Abr" : "Tbl",
+                      core->waveform.waveName);
+        }
 
         if (mcMode) {
             if (core->modulationOn) {

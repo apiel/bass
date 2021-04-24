@@ -8,10 +8,9 @@
 #include "../../audio/envelope.h"
 #include "../../audio/note.h"
 #include "../../effect/AudioEffectDistortion.h"
-#include "../io_audio_synth_wave.h"
 #include "../../io_util.h"
-
-#define WAVEFORM_COUNT 9
+#include "../../wavetable/kick06.h"
+#include "../io_audio_synth_wave.h"
 
 #define KICK_FILTER_TYPE_COUNT 3
 #define AUDIO_SYNTH_MOD 3
