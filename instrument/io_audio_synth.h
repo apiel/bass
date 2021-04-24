@@ -34,7 +34,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
         coreUI = new IO_AudioSynthCoreUI(this);
         seq = new IO_AudioSeq(this);
         seqUI = new IO_AudioSeqUI(seq);
-        filterUI = new IO_AudioFilterUI(this);
+        filterUI = new IO_AudioFilterUI(&filter);
     }
 
     void init(byte _id) {

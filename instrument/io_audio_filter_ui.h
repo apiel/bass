@@ -12,19 +12,18 @@
 
 class IO_AudioFilterUI {
    private:
-    IO_AudioSynthCore* core;
+    AudioFilter *filter;
 
    public:
-    IO_AudioFilterUI(IO_AudioSynthCore* _core) { core = _core; }
+    IO_AudioFilterUI(AudioFilter *_filter) { filter = _filter; }
 
-    void display(Adafruit_SSD1306* d) {
+    void display(Adafruit_SSD1306 *d) {
         addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
-                  core->filter.filterFrequency, core->filter.filterResonance);
-        d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
-                  (int)core->filter.adsr[0], (int)core->filter.adsr[1],
-                  (int)(core->filter.adsr[2] * 100.0),
-                  (int)core->filter.adsr[3]);
+        d->printf("%s %.1fHz %d\n", getFilter(filter->currentFilter),
+                  filter->filterFrequency, filter->filterResonance);
+        d->printf("%.1f %d|%d|%d%%|%d\n", filter->dcValue, (int)filter->adsr[0],
+                  (int)filter->adsr[1], (int)(filter->adsr[2] * 100.0),
+                  (int)filter->adsr[3]);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {}
@@ -34,21 +33,21 @@ class IO_AudioFilterUI {
     void controlChangeHandler(byte channel, byte knob, int8_t direction) {
         if (channel == 11) {
             if (knob == 1) {
-                core->filter.setCurrentFilter(direction);
+                filter->setCurrentFilter(direction);
             } else if (knob == 2) {
-                core->filter.setFilterFrequency(direction);
+                filter->setFilterFrequency(direction);
             } else if (knob == 3) {
-                core->filter.setFilterResonance(direction);
+                filter->setFilterResonance(direction);
             } else if (knob == 4) {
-                core->filter.setDc(direction);
+                filter->setDc(direction);
             } else if (knob == 5) {
-                core->filter.setAttack(direction);
+                filter->setAttack(direction);
             } else if (knob == 6) {
-                core->filter.setDecay(direction);
+                filter->setDecay(direction);
             } else if (knob == 7) {
-                core->filter.setSustain(direction);
+                filter->setSustain(direction);
             } else if (knob == 8) {
-                core->filter.setRelease(direction);
+                filter->setRelease(direction);
             } else if (knob == 11) {
             } else if (knob == 12) {
             } else if (knob == 13) {
