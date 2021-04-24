@@ -51,8 +51,10 @@ class IO_AudioKickCoreUI {
             d->printf("%.1fHz %d%%\n", core->waveform.frequency,
                       (int)(core->waveform.amplitude * 100));
 
-            d->printf("Start %d EG %d|%d\n", core->waveform.getStart(),
-                      (int)core->attackMs, (int)core->decayMs);
+            if (core->waveform.isWaveTable()) {
+                d->printf("Start %d ", core->waveform.waveTable.start);
+            }
+            d->printf("EG %d|%d\n", (int)core->attackMs, (int)core->decayMs);
 
             addToCursor(d, 0, 4);
             d->printf("%s %.1fHz %.1f\n", getFilter(core->currentFilter),
@@ -129,7 +131,9 @@ class IO_AudioKickCoreUI {
                 if (mcMode) {
                     core->setModLevel(5, direction);
                 } else {
-                    core->waveform.setStart(direction);
+                    if (core->waveform.isWaveTable()) {
+                        core->waveform.setStart(direction);
+                    }
                 }
             } else if (knob == 7) {
                 if (mcMode) {

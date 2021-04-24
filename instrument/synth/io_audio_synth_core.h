@@ -11,8 +11,6 @@
 #include "../../io_util.h"
 #include "../../wavetable/guitar01.h"
 
-#define WAVEFORM_COUNT 9
-
 class IO_AudioSynthCore : public AudioDumb {
    protected:
    public:
