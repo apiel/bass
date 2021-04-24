@@ -43,8 +43,8 @@ void displayUpdate() {
         lastDisplayUpdate = millis();
         if (isSynthView()) {
             getSynth()->display(&display);
-        } else if (isKickView()) {
-            getKick()->display(&display);
+        // } else if (isKickView()) {
+        //     getKick()->display(&display);
         }
         display.display();
     } else {

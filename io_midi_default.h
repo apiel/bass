@@ -11,22 +11,16 @@ bool defaultNoteOnHandler(byte channel, byte note, byte velocity) {
     if (note == 16 || note == 40) {
         toggleGcMode();
         return true;
-    } else if (note == 8) {
-        setKickViewPos(KICK_0);
-        return true;
-    } else if (note == 9) {
-        setKickViewPos(KICK_1);
-        return true;
-    } else if (note == 10) {
+    } else if (note == 8 || note == 32) {
         setSynthViewPos(SYNTH_0);
         return true;
-    } else if (note == 11) {
+    } else if (note == 9 || note == 33) {
         setSynthViewPos(SYNTH_1);
         return true;
-    } else if (note == 12) {
+    } else if (note == 10 || note == 34) {
         setSynthViewPos(SYNTH_2);
         return true;
-    } else if (note == 13) {
+    } else if (note == 11 || note == 35) {
         setSynthViewPos(SYNTH_3);
         return true;
     }
