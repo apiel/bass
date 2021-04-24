@@ -24,6 +24,7 @@ class IO_AudioSynthCore : public AudioDumb {
 
     byte lastNote = 0;
 
+    bool isDrum = false;
     float adsr[4] = {10.0, 50.0, 1.0, 50.0};
 
     byte currentWave = WAVEFORM_SINE;
@@ -75,13 +76,28 @@ class IO_AudioSynthCore : public AudioDumb {
     }
 
     void setSustain(int8_t direction) {
-        adsr[2] = pctAdd(adsr[2], direction);
-        env.sustain(adsr[2]);
+        if (!isDrum) {
+            adsr[2] = pctAdd(adsr[2], direction);
+            env.sustain(adsr[2]);
+        }
     }
 
     void setRelease(int8_t direction) {
-        adsr[3] = constrain(adsr[3] + direction, 0.0, 11880.0);
-        env.release(adsr[3]);
+        if (!isDrum) {
+            adsr[3] = constrain(adsr[3] + direction, 0.0, 11880.0);
+            env.release(adsr[3]);
+        }
+    }
+
+    void toggleDrum() {
+        isDrum = !isDrum;
+        if (isDrum) {
+            env.sustain(0.0);
+            env.release(0.0);
+        } else {
+            env.sustain(adsr[2]);
+            env.release(adsr[3]);
+        }
     }
 
     void noteOn() { noteOn(_C4, 127); }
@@ -102,9 +118,11 @@ class IO_AudioSynthCore : public AudioDumb {
 
     void noteOff() { noteOff(_C4); }
     void noteOff(byte note) {
-        env.noteOff();
-        freqMod.env.noteOff();
-        filter.env.noteOff();
+        if (!isDrum) {
+            env.noteOff();
+            freqMod.env.noteOff();
+            filter.env.noteOff();
+        }
     }
 };
 

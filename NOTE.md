@@ -3,6 +3,7 @@
 - save pattern
 
 - synth is drum is synth --> might change env
+                         --> so no noteOff
 
 - use AudioSynthWaveformModulated in synth and modulation
 

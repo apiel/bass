@@ -34,12 +34,20 @@ class IO_AudioSynthCoreUI {
         }
 
         addToCursor(d, 0, 4);
-        d->printf("ADSR %d|%d|%d%%|%d\n", (int)core->adsr[0],
-                  (int)core->adsr[1], (int)(core->adsr[2] * 100.0),
-                  (int)core->adsr[3]);
+        if (core->isDrum) {
+            d->printf("AD %d|%d\n", (int)core->adsr[0], (int)core->adsr[1]);
+        } else {
+            d->printf("ADSR %d|%d|%d%%|%d\n", (int)core->adsr[0],
+                      (int)core->adsr[1], (int)(core->adsr[2] * 100.0),
+                      (int)core->adsr[3]);
+        }
     }
 
-    void noteOnHandler(byte channel, byte note, byte velocity) {}
+    void noteOnHandler(byte channel, byte note, byte velocity) {
+        if (note == 17 || note == 41) {
+            core->toggleDrum();
+        }
+    }
 
     void noteOffHandler(byte channel, byte note, byte velocity) {}
 

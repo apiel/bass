@@ -51,7 +51,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
     void display(Adafruit_SSD1306* d) {
         d->clearDisplay();
         d->setCursor(0, 0);
-        d->printf("Synth %d\n", id);
+        d->printf("%d %s\n", id, isDrum ? "Drum" : "Synth");
 
         switch (currentView) {
             case VIEW_SEQ:
