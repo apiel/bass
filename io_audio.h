@@ -24,7 +24,7 @@ AudioConnection patchCordSynth3(synth[SYNTH_3], 0, mixerSynth, 3);
 void audioInit() {
     AudioMemory(25);
     for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
-        synth[pos].init();
+        synth[pos].init(pos);
     }
     // for (byte pos = 0; pos < KICK_COUNT; pos++) {
     //     kick[pos].init();

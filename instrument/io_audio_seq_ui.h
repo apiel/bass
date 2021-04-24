@@ -13,7 +13,7 @@ class IO_AudioSeqUI {
     IO_AudioSeq* seq;
 
     void displayStep(Adafruit_SSD1306* d, Pattern* pPattern, byte pos) {
-        byte topMargin = 18;
+        byte topMargin = 26;
         byte x = pos % 8;
         byte y = pos / 8 + 1;
 
@@ -55,9 +55,6 @@ class IO_AudioSeqUI {
     }
 
     void display(Adafruit_SSD1306* d) {
-        d->clearDisplay();
-        d->setCursor(0, 0);
-
         d->printf("%03d %s\n", seq->currentPattern, seq->pattern->name);
 
         Step* step = &seq->pattern->steps[seq->currentStepSelection];

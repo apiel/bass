@@ -19,9 +19,6 @@ class IO_AudioSynthCoreUI {
     IO_AudioSynthCoreUI(IO_AudioSynthCore* _core) { core = _core; }
 
     void display(Adafruit_SSD1306* d) {
-        d->clearDisplay();
-        d->setCursor(0, 0);
-
         d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
         d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
                   (int)core->adsr[0], (int)core->adsr[1],

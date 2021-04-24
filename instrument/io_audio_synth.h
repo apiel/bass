@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <Audio.h>
 
+#include "./io_audio_filter_ui.h"
 #include "./io_audio_seq.h"
 #include "./io_audio_seq_ui.h"
 #include "./io_audio_synth_core.h"
@@ -12,26 +13,47 @@
 
 class IO_AudioSynth : public IO_AudioSynthCore {
    protected:
-    enum { VIEW_CORE, VIEW_FILTER, VIEW_MODULATION, VIEW_SEQ, VIEW_COUNT };
+    enum {
+        VIEW_CORE,
+        VIEW_FILTER,
+        VIEW_EFFECT,
+        VIEW_MODULATION,
+        VIEW_SEQ,
+        VIEW_COUNT
+    };
     byte currentView = VIEW_CORE;
 
    public:
+    byte id = 0;
     IO_AudioSynthCoreUI* coreUI;
     IO_AudioSeq* seq;
     IO_AudioSeqUI* seqUI;
+    IO_AudioFilterUI* filterUI;
 
     IO_AudioSynth() {
         coreUI = new IO_AudioSynthCoreUI(this);
         seq = new IO_AudioSeq(this);
         seqUI = new IO_AudioSeqUI(seq);
+        filterUI = new IO_AudioFilterUI(this);
     }
 
-    void init() { seq->init(); }
+    void init(byte _id) {
+        seq->init();
+        id = _id;
+    }
 
     void display(Adafruit_SSD1306* d) {
+        d->clearDisplay();
+        d->setCursor(0, 0);
+        d->printf("Synth %d\n", id);
+
         switch (currentView) {
             case VIEW_SEQ:
                 seqUI->display(d);
+                break;
+
+            case VIEW_FILTER:
+                filterUI->display(d);
                 break;
 
             default:
@@ -52,12 +74,18 @@ class IO_AudioSynth : public IO_AudioSynthCore {
             setCurrentView(-1);
         } else if (note == 19 || note == 43) {
             setCurrentView(1);
+        } else if (note == 21 || note == 45) {
+            noteOn();
         } else if (note == 22 || note == 46) {
             seq->toggle();
         } else {
             switch (currentView) {
                 case VIEW_SEQ:
                     seqUI->noteOnHandler(channel, note, velocity);
+                    break;
+
+                case VIEW_FILTER:
+                    filterUI->noteOnHandler(channel, note, velocity);
                     break;
 
                 case VIEW_CORE:
@@ -68,13 +96,33 @@ class IO_AudioSynth : public IO_AudioSynthCore {
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity) {
-        coreUI->noteOffHandler(channel, note, velocity);
+        if (note == 21 || note == 45) {
+            noteOff();
+        } else {
+            switch (currentView) {
+                case VIEW_SEQ:
+                    // seqUI->noteOffHandler(channel, note, velocity);
+                    break;
+
+                case VIEW_FILTER:
+                    filterUI->noteOffHandler(channel, note, velocity);
+                    break;
+
+                case VIEW_CORE:
+                    coreUI->noteOffHandler(channel, note, velocity);
+                    break;
+            }
+        }
     }
 
     void controlChangeHandler(byte channel, byte knob, int8_t direction) {
         switch (currentView) {
             case VIEW_SEQ:
                 seqUI->controlChangeHandler(channel, knob, direction);
+                break;
+
+            case VIEW_FILTER:
+                filterUI->controlChangeHandler(channel, knob, direction);
                 break;
 
             case VIEW_CORE:
