@@ -13,12 +13,12 @@
 class AudioModulation : public AudioDumb {
    private:
     AudioSynthWaveformDc dc;
-    Envelope<8> env;
 
     AudioConnection* patchCordDcToEnv;
     AudioConnection* patchCordOutput;
 
    public:
+    Envelope<8> env;
     bool modulationOn = true;
 
     float modMs[MOD_ENV_SIZE] = {5.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 5.0};

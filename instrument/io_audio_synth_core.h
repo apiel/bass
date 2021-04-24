@@ -39,7 +39,7 @@ class IO_AudioSynthCore : public AudioDumb {
     Guitar01 table;
 
     IO_AudioSynthCore() {
-        patchCordFreqModToWave = new AudioConnection(freqMod, wave);
+        patchCordFreqModToWave = new AudioConnection(freqMod, wave.input);
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter.input);
         patchCordFilterToDistortion = new AudioConnection(filter, distortion);
@@ -96,12 +96,14 @@ class IO_AudioSynthCore : public AudioDumb {
         // // waveform.setAmplitude(_amp);
         // // waveform.setFrequency(_freq);
         env.noteOn();
+        freqMod.env.noteOn();
         filter.env.noteOn();
     }
 
     void noteOff() { noteOff(_C4); }
     void noteOff(byte note) {
         env.noteOff();
+        freqMod.env.noteOff();
         filter.env.noteOff();
     }
 };

@@ -37,7 +37,11 @@ class IO_AudioModulationUI {
         }
     }
 
-    void noteOnHandler(byte channel, byte note, byte velocity) {}
+    void noteOnHandler(byte channel, byte note, byte velocity) {
+        if (note == 17 || note == 41) {
+            mod->toggleModulation();
+        }
+    }
 
     void noteOffHandler(byte channel, byte note, byte velocity) {}
 
