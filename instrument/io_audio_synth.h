@@ -7,6 +7,7 @@
 
 #include "./io_audio_effect_ui.h"
 #include "./io_audio_filter_ui.h"
+#include "./io_audio_modulation_ui.h"
 #include "./io_audio_seq.h"
 #include "./io_audio_seq_ui.h"
 #include "./io_audio_synth_core.h"
@@ -31,6 +32,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
     IO_AudioSeqUI* seqUI;
     IO_AudioFilterUI* filterUI;
     IO_AudioEffectUI* effectUI;
+    IO_AudioModulationUI* modUI;
 
     IO_AudioSynth() {
         coreUI = new IO_AudioSynthCoreUI(this);
@@ -38,6 +40,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
         seqUI = new IO_AudioSeqUI(seq);
         filterUI = new IO_AudioFilterUI(&filter);
         effectUI = new IO_AudioEffectUI(this);
+        modUI = new IO_AudioModulationUI(&freqMod);
     }
 
     void init(byte _id) {
@@ -61,6 +64,10 @@ class IO_AudioSynth : public IO_AudioSynthCore {
 
             case VIEW_EFFECT:
                 effectUI->display(d);
+                break;
+
+            case VIEW_MODULATION:
+                modUI->display(d);
                 break;
 
             default:
@@ -99,6 +106,10 @@ class IO_AudioSynth : public IO_AudioSynthCore {
                     effectUI->noteOnHandler(channel, note, velocity);
                     break;
 
+                case VIEW_MODULATION:
+                    modUI->noteOnHandler(channel, note, velocity);
+                    break;
+
                 case VIEW_CORE:
                     coreUI->noteOnHandler(channel, note, velocity);
                     break;
@@ -123,6 +134,10 @@ class IO_AudioSynth : public IO_AudioSynthCore {
                     effectUI->noteOffHandler(channel, note, velocity);
                     break;
 
+                case VIEW_MODULATION:
+                    modUI->noteOffHandler(channel, note, velocity);
+                    break;
+
                 case VIEW_CORE:
                     coreUI->noteOffHandler(channel, note, velocity);
                     break;
@@ -142,6 +157,10 @@ class IO_AudioSynth : public IO_AudioSynthCore {
 
             case VIEW_EFFECT:
                 effectUI->controlChangeHandler(channel, knob, direction);
+                break;
+
+            case VIEW_MODULATION:
+                modUI->controlChangeHandler(channel, knob, direction);
                 break;
 
             case VIEW_CORE:
