@@ -19,9 +19,15 @@ class IO_AudioFilterUI {
 
     void display(Adafruit_SSD1306 *d) {
         addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz %d\n", getFilter(filter->currentFilter),
-                  filter->filterFrequency, filter->filterResonance);
-        d->printf("%.1f %d|%d|%d%%|%d\n", filter->dcValue, (int)filter->adsr[0],
+        d->printf("%s filter\n", getFilter(filter->currentFilter));
+
+        addToCursor(d, 0, 4);
+        d->printf("Cutoff %.1fHz\n", filter->filterFrequency);
+        d->printf("Resonance %d\n", filter->filterResonance);
+
+        addToCursor(d, 0, 4);
+        d->printf("Filter envelop %.1f\n", filter->dcValue);
+        d->printf("ADSR %d|%d|%d%%|%d\n", (int)filter->adsr[0],
                   (int)filter->adsr[1], (int)(filter->adsr[2] * 100.0),
                   (int)filter->adsr[3]);
     }

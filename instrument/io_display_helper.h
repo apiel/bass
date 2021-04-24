@@ -1,7 +1,7 @@
 #ifndef IO_DISPLAY_HELPER_H_
 #define IO_DISPLAY_HELPER_H_
 
-const char* getFilter(byte w) {
+const char* getFilterShort(byte w) {
     switch (w) {
         case 0:
             return "LowP";
@@ -9,6 +9,20 @@ const char* getFilter(byte w) {
             return "BandP";
         case 2:
             return "HighP";
+        case 3:
+            return "None";
+    }
+    return "??";
+}
+
+const char* getFilter(byte w) {
+    switch (w) {
+        case 0:
+            return "LowPass";
+        case 1:
+            return "BandPass";
+        case 2:
+            return "HighPass";
         case 3:
             return "None";
     }
