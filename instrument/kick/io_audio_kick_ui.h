@@ -57,7 +57,7 @@ class IO_AudioKickCoreUI {
                       (int)(core->waveform.amplitude * 100));
 
             if (core->waveform.isWaveTable()) {
-                d->printf("Start %d ", core->waveform.waveTable.start);
+                d->printf("Start %d", core->waveform.waveTable.start);
             }
             d->printf("EG %d|%d\n", (int)core->attackMs, (int)core->decayMs);
 

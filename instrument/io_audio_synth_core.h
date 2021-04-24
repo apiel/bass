@@ -10,11 +10,12 @@
 #include "../effect/AudioEffectDistortion.h"
 #include "../io_util.h"
 #include "../wavetable/guitar01.h"
+#include "./io_audio_synth_wave.h"
 
 class IO_AudioSynthCore : public AudioDumb {
    protected:
    public:
-    AudioSynthWaveform wave;
+    IO_AudioSynthWave wave;
     AudioEffectEnvelope env;
     AudioEffectDistortion distortion;
     AudioFilter filter;
@@ -46,28 +47,7 @@ class IO_AudioSynthCore : public AudioDumb {
         env.sustain(adsr[2]);
         env.release(adsr[3]);
 
-        wave.frequency(frequency);
-        wave.amplitude(amplitude);
-        wave.arbitraryWaveform(table.table, 172.0);
-        wave.begin(currentWave);
-
         distortion.distortion(0.5);
-    }
-
-    void setNextWave(int8_t direction) {
-        currentWave = mod(currentWave + direction, WAVEFORM_COUNT);
-        wave.begin(currentWave);
-    }
-
-    void setFrequency(int8_t direction) {
-        frequency =
-            constrain(frequency + direction, 0, AUDIO_SAMPLE_RATE_EXACT / 2);
-        wave.frequency(frequency);
-    }
-
-    void setAmplitude(int8_t direction) {
-        amplitude = pctAdd(amplitude, direction);
-        wave.amplitude(amplitude);
     }
 
     void setDistortion(int8_t direction) {

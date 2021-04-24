@@ -20,58 +20,45 @@ class IO_AudioSynthCoreUI {
 
     void display(Adafruit_SSD1306* d) {
         addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
-        d->printf("Amplitude %d%%\n", (int)(core->amplitude * 100.0));
+        if (core->wave.isWaveForm()) {
+            d->printf("%s\n", getWave(core->wave.currentWave));
+        } else {
+            d->printf("%s %s\n", core->wave.isWaveArbitrary() ? "Abr" : "Tbl",
+                      core->wave.waveName);
+        }
+
+        d->printf("Frequency %.1fHz\n", core->wave.frequency);
+        d->printf("Amplitude %d%%\n", (int)(core->wave.amplitude * 100.0));
+        if (core->wave.isWaveTable()) {
+            d->printf("Start pos %d\n", core->wave.waveTable.start);
+        }
+
         addToCursor(d, 0, 4);
         d->printf("ADSR %d|%d|%d%%|%d\n", (int)core->adsr[0],
                   (int)core->adsr[1], (int)(core->adsr[2] * 100.0),
                   (int)core->adsr[3]);
     }
 
-    void noteOnHandler(byte channel, byte note, byte velocity) {
-        if (channel == 11) {
-            byte key = getItemKey(note);
-            if (key != 255) {
-                // currentkick = key;
-            } else if (note == 21 || note == 45) {
-                core->noteOn();
-            } else if (note == 23 || note == 47) {
-                // savekick(currentkick);
-            } else if (note == 20) {
-            } else if (note == 17 || note == 41) {
-                // if (mcMode) {
-                //     toggleModulation();
-                // } else {
-                //     toggleRectifier();
-                // }
-            }
-        }
-    }
+    void noteOnHandler(byte channel, byte note, byte velocity) {}
 
-    void noteOffHandler(byte channel, byte note, byte velocity) {
-        if (channel == 11) {
-            if (note == 21 || note == 45) {
-                core->noteOff();
-            }
-        }
-    }
+    void noteOffHandler(byte channel, byte note, byte velocity) {}
 
     void controlChangeHandler(byte channel, byte knob, int8_t direction) {
         if (channel == 11) {
             if (knob == 1) {
                 if (mcMode) {
                 } else {
-                    core->setNextWave(direction);
+                    core->wave.setNextWaveform(direction);
                 }
             } else if (knob == 2) {
                 if (mcMode) {
                 } else {
-                    core->setFrequency(direction);
+                    core->wave.setFrequency(direction);
                 }
             } else if (knob == 3) {
                 if (mcMode) {
                 } else {
-                    core->setAmplitude(direction);
+                    core->wave.setAmplitude(direction);
                 }
             } else if (knob == 4) {
                 if (mcMode) {

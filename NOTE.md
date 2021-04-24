@@ -2,6 +2,8 @@
 - save kick
 - save pattern
 
+- synth is drum is synth --> might change env
+
 - use AudioSynthWaveformModulated in synth and modulation
 
 - use btn view in mc mode in pattern
