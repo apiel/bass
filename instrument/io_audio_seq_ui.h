@@ -8,10 +8,9 @@
 #include "./io_audio_seq.h"
 #include "io_config.h"
 
-template<class AudioCore = void>
 class IO_AudioSeqUI {
    private:
-    IO_AudioSeq<AudioCore>* seq;
+    IO_AudioSeq* seq;
 
     void displayStep(Adafruit_SSD1306* d, Pattern* pPattern, byte pos) {
         byte topMargin = 18;
@@ -43,7 +42,7 @@ class IO_AudioSeqUI {
     }
 
    public:
-    IO_AudioSeqUI(IO_AudioSeq<AudioCore>* _seq) {
+    IO_AudioSeqUI(IO_AudioSeq* _seq) {
         seq = _seq;
     }
 

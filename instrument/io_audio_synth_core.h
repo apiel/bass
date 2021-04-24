@@ -4,12 +4,12 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../../audio/AudioFilter.h"
-#include "../../audio/audio_dumb.h"
-#include "../../audio/note.h"
-#include "../../effect/AudioEffectDistortion.h"
-#include "../../io_util.h"
-#include "../../wavetable/guitar01.h"
+#include "../audio/AudioFilter.h"
+#include "../audio/audio_dumb.h"
+#include "../audio/note.h"
+#include "../effect/AudioEffectDistortion.h"
+#include "../io_util.h"
+#include "../wavetable/guitar01.h"
 
 class IO_AudioSynthCore : public AudioDumb {
    protected:

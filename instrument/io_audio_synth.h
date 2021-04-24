@@ -1,7 +1,5 @@
-// to be removed
-
-#ifndef IO_AUDIO_BASE_H_
-#define IO_AUDIO_BASE_H_
+#ifndef IO_AUDIO_SYNTH_H_
+#define IO_AUDIO_SYNTH_H_
 
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
@@ -9,17 +7,24 @@
 
 #include "./io_audio_seq.h"
 #include "./io_audio_seq_ui.h"
+#include "./io_audio_synth_core.h"
+#include "./io_audio_synth_ui.h"
 
-template<class AudioCore = void, class AudioCoreUI = void>
-class IO_AudioBase {
+class IO_AudioSynth : public IO_AudioSynthCore {
    protected:
     enum { VIEW_CORE, VIEW_FILTER, VIEW_MODULATION, VIEW_SEQ, VIEW_COUNT };
     byte currentView = VIEW_CORE;
 
    public:
-    AudioCoreUI* coreUI;
-    IO_AudioSeq<AudioCore>* seq;
-    IO_AudioSeqUI<AudioCore>* seqUI;
+    IO_AudioSynthCoreUI* coreUI;
+    IO_AudioSeq* seq;
+    IO_AudioSeqUI* seqUI;
+
+    IO_AudioSynth() {
+        coreUI = new IO_AudioSynthCoreUI(this);
+        seq = new IO_AudioSeq(this);
+        seqUI = new IO_AudioSeqUI(seq);
+    }
 
     void init() { seq->init(); }
 

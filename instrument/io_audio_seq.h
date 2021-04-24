@@ -5,11 +5,11 @@
 
 #include "../Pattern.h"
 #include "../io_pattern_storage.h"
+#include "./io_audio_synth_core.h"
 
-template<class AudioCore = void>
 class IO_AudioSeq {
    private:
-    AudioCore* core;
+    IO_AudioSynthCore* core;
     // should it be a pointer or a copy?
     byte currentStep = 0;
     Step lastStep;
@@ -27,7 +27,7 @@ class IO_AudioSeq {
     byte currentStepSelection = 0;
     Pattern* pattern;
 
-    IO_AudioSeq(AudioCore* _core) { core = _core; }
+    IO_AudioSeq(IO_AudioSynthCore* _core) { core = _core; }
 
     void init() { setCurrentPattern(0); }
 

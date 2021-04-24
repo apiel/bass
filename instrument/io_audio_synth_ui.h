@@ -5,10 +5,10 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../../io_display_util.h"
-#include "../../io_midi_util.h"
-#include "../../io_state.h"
-#include "../io_display_helper.h"
+#include "../io_display_util.h"
+#include "../io_midi_util.h"
+#include "../io_state.h"
+#include "./io_display_helper.h"
 #include "./io_audio_synth_core.h"
 
 class IO_AudioSynthCoreUI {

@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-#include "instrument/synth/io_audio_synth.h"
-#include "instrument/kick/io_audio_kick.h"
+#include "instrument/io_audio_synth.h"
+// #include "instrument/kick/io_audio_kick.h"
 
 // #define SYNTH_COUNT 4
 
