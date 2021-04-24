@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "../audio/AudioFilter.h"
+#include "../audio/AudioModulation.h"
 #include "../audio/audio_dumb.h"
 #include "../audio/note.h"
 #include "../effect/AudioEffectDistortion.h"
@@ -19,6 +20,7 @@ class IO_AudioSynthCore : public AudioDumb {
     AudioEffectEnvelope env;
     AudioEffectDistortion distortion;
     AudioFilter filter;
+    AudioModulation freqMod;
 
     byte lastNote = 0;
 
@@ -28,6 +30,7 @@ class IO_AudioSynthCore : public AudioDumb {
     float frequency = 120.0;
     float amplitude = 1.0;
 
+    AudioConnection* patchCordFreqModToWave;
     AudioConnection* patchCordWaveToEnv;
     AudioConnection* patchCordEnvToFilter;
     AudioConnection* patchCordFilterToDistortion;
@@ -36,6 +39,7 @@ class IO_AudioSynthCore : public AudioDumb {
     Guitar01 table;
 
     IO_AudioSynthCore() {
+        patchCordFreqModToWave = new AudioConnection(freqMod, wave);
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter.input);
         patchCordFilterToDistortion = new AudioConnection(filter, distortion);
