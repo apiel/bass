@@ -23,10 +23,6 @@ class IO_AudioSynthCoreUI {
         d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
                   (int)core->adsr[0], (int)core->adsr[1],
                   (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
-
-        addToCursor(d, 0, 4);
-        d->printf("Dist %d range %d\n", (int)core->distortion.amount,
-                  (int)core->distortion.range);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
@@ -61,59 +57,49 @@ class IO_AudioSynthCoreUI {
         if (channel == 11) {
             if (knob == 1) {
                 if (mcMode) {
-                    core->filter.setCurrentFilter(direction);
                 } else {
                     core->setNextWave(direction);
                 }
             } else if (knob == 2) {
                 if (mcMode) {
-                    core->filter.setFilterFrequency(direction);
                 } else {
                     core->setFrequency(direction);
                 }
             } else if (knob == 3) {
                 if (mcMode) {
-                    core->filter.setFilterResonance(direction);
                 } else {
                     core->setAmplitude(direction);
                 }
             } else if (knob == 4) {
                 if (mcMode) {
-                    core->filter.setDc(direction);
                 } else {
                 }
             } else if (knob == 5) {
                 if (mcMode) {
-                    core->filter.setAttack(direction);
                 } else {
                     core->setAttack(direction);
                 }
             } else if (knob == 6) {
                 if (mcMode) {
-                    core->filter.setDecay(direction);
                 } else {
                     core->setDecay(direction);
                 }
             } else if (knob == 7) {
                 if (mcMode) {
-                    core->filter.setSustain(direction);
                 } else {
                     core->setSustain(direction);
                 }
             } else if (knob == 8) {
                 if (mcMode) {
-                    core->filter.setRelease(direction);
                 } else {
                     core->setRelease(direction);
                 }
             } else if (knob == 11) {
                 if (mcMode) {
-                    core->setDistortion(direction);
                 } else {
                 }
             } else if (knob == 12) {
                 if (mcMode) {
-                    core->setDistortionRange(direction);
                 } else {
                 }
             } else if (knob == 13) {
