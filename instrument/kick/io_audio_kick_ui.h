@@ -61,9 +61,14 @@ class IO_AudioKickCoreUI {
             }
             d->printf("EG %d|%d\n", (int)core->attackMs, (int)core->decayMs);
 
-            addToCursor(d, 0, 4);
-            d->printf("%s %.1fHz %.1f\n", getFilter(core->currentFilter),
-                      core->filterFrequency, core->filterResonance);
+            // addToCursor(d, 0, 4);
+            d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
+                      core->filter.filterFrequency,
+                      core->filter.filterResonance);
+            d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
+                      (int)core->filter.adsr[0], (int)core->filter.adsr[1],
+                      (int)(core->filter.adsr[2] * 100.0),
+                      (int)core->filter.adsr[3]);
 
             d->printf("Dist %d range %d\n", (int)core->distortion.amount,
                       (int)core->distortion.range);
@@ -156,19 +161,19 @@ class IO_AudioKickCoreUI {
                 if (mcMode) {
                     core->setModMs(0, direction);
                 } else {
-                    core->setCurrentFilter(direction);
+                    core->filter.setCurrentFilter(direction);
                 }
             } else if (knob == 12) {
                 if (mcMode) {
                     core->setModMs(1, direction);
                 } else {
-                    core->setFilterFrequency(direction);
+                    core->filter.setFilterFrequency(direction);
                 }
             } else if (knob == 13) {
                 if (mcMode) {
                     core->setModMs(2, direction);
                 } else {
-                    core->setFilterResonance(direction);
+                    core->filter.setFilterResonance(direction);
                 }
             } else if (knob == 14) {
                 if (mcMode) {

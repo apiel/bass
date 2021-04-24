@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Audio.h>
 
+#include "../../audio/AudioFilter.h"
 #include "../../audio/audio_dumb.h"
 #include "../../audio/envelope.h"
 #include "../../audio/note.h"
@@ -21,8 +22,7 @@ class IO_AudioKickCore : public AudioDumb {
    public:
     IO_AudioSynthWave waveform;
     Envelope<2> env;
-    // ToDo fix filter
-    AudioFilterStateVariable filter;
+    AudioFilter filter;
     AudioSynthWaveformDc dc;
     Envelope<8> envMod;
     AudioEffectBitcrusher bitcrusher;
@@ -45,7 +45,7 @@ class IO_AudioKickCore : public AudioDumb {
     byte xcrushBits = 12;
     bool rectifierOn = false;
 
-    AudioConnection* patchCordFilter[KICK_FILTER_TYPE_COUNT];
+    AudioConnection* patchCordFilter;
     AudioConnection* patchCordEnvToFilter;
     AudioConnection* patchCordWaveToEnv;
     AudioConnection* patchCordDcToEnvMod;
@@ -59,10 +59,8 @@ class IO_AudioKickCore : public AudioDumb {
         patchCordDcToEnvMod = new AudioConnection(dc, envMod);
         patchCordEnvModToWave = new AudioConnection(envMod, waveform.input);
         patchCordWaveToEnv = new AudioConnection(waveform, env);
-        patchCordEnvToFilter = new AudioConnection(env, filter);
-        patchCordFilter[0] = new AudioConnection(filter, 0, bitcrusher, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, bitcrusher, 0);
-        patchCordFilter[2] = new AudioConnection(filter, 2, bitcrusher, 0);
+        patchCordEnvToFilter = new AudioConnection(env, filter.input);
+        patchCordFilter = new AudioConnection(filter, bitcrusher);
         patchCordBitcrusher = new AudioConnection(bitcrusher, distortion);
         patchCordDistortionToRectifier =
             new AudioConnection(distortion, rectifier);
@@ -71,11 +69,6 @@ class IO_AudioKickCore : public AudioDumb {
 
         env.set(1, 1.0, attackMs);
         env.set(2, 0.0, decayMs);
-
-        setCurrentFilter(0);
-        filter.frequency(filterFrequency);
-        filter.resonance(filterResonance);
-        filter.octaveControl(filterOctaveControl);
 
         dc.amplitude(0.5);
 
@@ -150,31 +143,6 @@ class IO_AudioKickCore : public AudioDumb {
         }
     }
 
-    void setCurrentFilter(int8_t direction) {
-        currentFilter = mod(currentFilter + direction, KICK_FILTER_TYPE_COUNT);
-        // as only the last connected is the one used
-        // https://www.pjrc.com/teensy/td_libs_AudioConnection.html
-        patchCordFilter[currentFilter]->connect();
-    }
-
-    void setFilterFrequency(int8_t direction) {
-        filterFrequency = constrain(filterFrequency + direction, 0,
-                                    AUDIO_SAMPLE_RATE_EXACT / 2);
-        filter.frequency(filterFrequency);
-    }
-
-    void setFilterResonance(int8_t direction) {
-        filterResonance =
-            constrain(filterResonance + direction * 0.1, 0.7, 5.0);
-        filter.resonance(filterResonance);
-    }
-
-    void setFilterOctaveControl(int8_t direction) {
-        filterOctaveControl =
-            constrain(filterOctaveControl + direction * 0.1, 0.0, 7.0);
-        filter.octaveControl(filterOctaveControl);
-    }
-
     void setAttack(int8_t direction) {
         attackMs = constrain(attackMs + direction, 0, 11880);
         // env.attack(attackMs);
@@ -192,6 +160,7 @@ class IO_AudioKickCore : public AudioDumb {
     void noteOn(byte note, byte velocity) {
         envMod.noteOn();
         env.noteOn();
+        filter.env.noteOn();
     }
 
     void noteOff() {}
