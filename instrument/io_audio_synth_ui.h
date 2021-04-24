@@ -8,8 +8,8 @@
 #include "../io_display_util.h"
 #include "../io_midi_util.h"
 #include "../io_state.h"
-#include "./io_display_helper.h"
 #include "./io_audio_synth_core.h"
+#include "./io_display_helper.h"
 
 class IO_AudioSynthCoreUI {
    private:
@@ -19,10 +19,13 @@ class IO_AudioSynthCoreUI {
     IO_AudioSynthCoreUI(IO_AudioSynthCore* _core) { core = _core; }
 
     void display(Adafruit_SSD1306* d) {
+        addToCursor(d, 0, 4);
         d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
-        d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
-                  (int)core->adsr[0], (int)core->adsr[1],
-                  (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
+        d->printf("Amplitude %d%%\n", (int)(core->amplitude * 100.0));
+        addToCursor(d, 0, 4);
+        d->printf("ADSR %d|%d|%d%%|%d\n", (int)core->adsr[0],
+                  (int)core->adsr[1], (int)(core->adsr[2] * 100.0),
+                  (int)core->adsr[3]);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
