@@ -39,7 +39,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
         seq = new IO_AudioSeq(this);
         seqUI = new IO_AudioSeqUI(seq);
         filterUI = new IO_AudioFilterUI(&filter);
-        effectUI = new IO_AudioEffectUI(this);
+        effectUI = new IO_AudioEffectUI(&effect);
         modUI = new IO_AudioModulationUI(&freqMod);
     }
 

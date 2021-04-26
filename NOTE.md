@@ -1,16 +1,13 @@
-- save synth
-- save kick
+- effect
+    - add more effect
+
+- edit pattern
+- pattern remove duration. only use slide/tie
 - save pattern
-
-- synth is drum is synth --> might change env
-                         --> so no noteOff
-
-- use AudioSynthWaveformModulated in synth and modulation
+- save synth
 
 - use btn view in mc mode in pattern
-- pattern remove duration. only use slide/tie
 
-- fix kick filter
 - set another path for kick pattern
 
 - main view
@@ -18,6 +15,7 @@
     - stop all (/ play all ?)
     - volume
     - see playing insturment
+    - select project
     
 - project folder
 

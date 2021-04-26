@@ -8,7 +8,7 @@
 #include "../audio/AudioModulation.h"
 #include "../audio/audio_dumb.h"
 #include "../audio/note.h"
-#include "../effect/AudioEffectDistortion.h"
+#include "../effect/AudioEffect.h"
 #include "../io_util.h"
 #include "../wavetable/guitar01.h"
 #include "./io_audio_synth_wave.h"
@@ -18,7 +18,7 @@ class IO_AudioSynthCore : public AudioDumb {
    public:
     IO_AudioSynthWave wave;
     AudioEffectEnvelope env;
-    AudioEffectDistortion distortion;
+    AudioEffect effect;
     AudioFilter filter;
     AudioModulation freqMod;
 
@@ -34,8 +34,8 @@ class IO_AudioSynthCore : public AudioDumb {
     AudioConnection* patchCordFreqModToWave;
     AudioConnection* patchCordWaveToEnv;
     AudioConnection* patchCordEnvToFilter;
-    AudioConnection* patchCordFilterToDistortion;
-    AudioConnection* patchCordDistortionToOutput;
+    AudioConnection* patchCordFilterToEffect;
+    AudioConnection* patchCordEffectToOutput;
 
     Guitar01 table;
 
@@ -43,26 +43,14 @@ class IO_AudioSynthCore : public AudioDumb {
         patchCordFreqModToWave = new AudioConnection(freqMod, wave.input);
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter.input);
-        patchCordFilterToDistortion = new AudioConnection(filter, distortion);
-        patchCordDistortionToOutput = new AudioConnection(distortion, *this);
+        patchCordFilterToEffect = new AudioConnection(filter, effect.input);
+        patchCordEffectToOutput = new AudioConnection(effect, *this);
 
         env.hold(0);
         env.attack(adsr[0]);
         env.decay(adsr[1]);
         env.sustain(adsr[2]);
         env.release(adsr[3]);
-
-        distortion.distortion(0.5);
-    }
-
-    void setDistortion(int8_t direction) {
-        float amount = constrain(distortion.amount + direction, 0, 1000);
-        distortion.distortion(amount);
-    }
-
-    void setDistortionRange(int8_t direction) {
-        float range = constrain(distortion.range + direction, 1, 1000);
-        distortion.setRange(range);
     }
 
     void setAttack(int8_t direction) {
