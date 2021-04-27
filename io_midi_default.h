@@ -6,6 +6,7 @@
 #include "io_instrument.h"
 #include "io_state.h"
 #include "io_view.h"
+#include "io_state_midi_controller.h"
 
 bool defaultNoteOnHandler(byte channel, byte note, byte velocity) {
     if (note == 16 || note == 40) {
@@ -37,8 +38,9 @@ bool defaultNoteOnHandler(byte channel, byte note, byte velocity) {
 
 bool defaultNoteOffHandler(byte channel, byte note, byte velocity) {
     if (note == 16 || note == 40) {
-        updateMcModeState();
+        updateMcModeStateOnMidiController();
     }
+    updateCurrentViewStateOnMidiController();
     return false;
 }
 

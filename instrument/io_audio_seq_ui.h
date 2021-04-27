@@ -5,6 +5,7 @@
 #include <Arduino.h>
 
 #include "../io_display_util.h"
+#include "../io_midi_core.h"
 #include "./io_audio_seq.h"
 #include "io_config.h"
 
@@ -97,6 +98,25 @@ class IO_AudioSeqUI {
                 seq->toggleStep(6);
             } else if (note == 15 || note == 39) {
                 seq->toggleStep(7);
+            }
+        }
+    }
+
+    void noteOffHandler(byte channel, byte note, byte velocity) {
+        updateMidiController();
+    }
+
+    void updateMidiController() {
+        if (mcMode) {
+            for (byte pos = 0; pos < 8; pos++) {
+                Step* step = &seq->pattern->steps[pos + seq->currentRow * 8];
+                if (step->duration) {
+                    noteOn(8 + pos);
+                    noteOn(32 + pos);
+                } else {
+                    noteOff(8 + pos);
+                    noteOff(32 + pos);
+                }
             }
         }
     }

@@ -6,10 +6,9 @@
 #include "instrument/io_audio_synth.h"
 #include "io_instrument.h"
 #include "io_util.h"
+#include "io_view_state.h"
 
 #define MAIN_VIEW_COUNT (SYNTH_COUNT)
-
-byte currentView = 0;
 
 void setCurrentView(int8_t direction) {
     currentView = mod(currentView + direction, MAIN_VIEW_COUNT);

@@ -11,14 +11,4 @@ bool sdAvailable = true;
 
 void toggleMcMode() { mcMode = !mcMode; }
 
-void updateMcModeState() {
-    if (mcMode) {
-        noteOn(16);
-        noteOn(40);
-    } else {
-        noteOff(16);
-        noteOff(40);
-    }
-}
-
 #endif

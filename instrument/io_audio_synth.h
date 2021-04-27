@@ -123,7 +123,7 @@ class IO_AudioSynth : public IO_AudioSynthCore {
         } else {
             switch (currentView) {
                 case VIEW_SEQ:
-                    // seqUI->noteOffHandler(channel, note, velocity);
+                    seqUI->noteOffHandler(channel, note, velocity);
                     break;
 
                 case VIEW_FILTER:
