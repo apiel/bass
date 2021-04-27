@@ -12,14 +12,12 @@ bool sdAvailable = true;
 void toggleMcMode() { mcMode = !mcMode; }
 
 void updateMcModeState() {
-    for (byte n = 0; n < MIDI_COUNT; n++) {
-        if (mcMode) {
-            midi[n].sendNoteOn(16, 100, 11);
-            midi[n].sendNoteOn(40, 100, 11);
-        } else {
-            midi[n].sendNoteOff(16, 100, 11);
-            midi[n].sendNoteOff(40, 100, 11);
-        }
+    if (mcMode) {
+        noteOn(16);
+        noteOn(40);
+    } else {
+        noteOff(16);
+        noteOff(40);
     }
 }
 
