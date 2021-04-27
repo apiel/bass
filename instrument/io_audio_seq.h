@@ -14,13 +14,6 @@ class IO_AudioSeq {
     byte currentStep = 0;
     Step lastStep;
 
-    void nextOff() {
-        if (lastStep.duration == 0) {
-            core->noteOff(lastStep.note);
-            lastStep.duration = 255;
-        }
-    }
-
    public:
     bool active = false;
     byte currentPattern = 0;
@@ -37,26 +30,15 @@ class IO_AudioSeq {
     }
 
     void next() {
-        if (lastStep.duration != 255) {
-            lastStep.duration--;
-            if (!lastStep.tie) {
-                nextOff();
-            }
+        Step* step = &pattern->steps[currentStep];
+        bool triggerNoteOn = active && step->duration;
+        if (!lastStep.tie || !triggerNoteOn) {
+            core->noteOff(lastStep.note);
         }
-        if (active) {
-            Step* step = &pattern->steps[currentStep];
-            if (step->duration) {
-                core->noteOn(step->note, step->velocity);
-                if (lastStep.duration != 255) {
-                    lastStep.duration = 0;
-                    nextOff();
-                }
-                lastStep.set(step);
-            }
+        if (triggerNoteOn) {
+            core->noteOn(step->note, step->velocity);
         }
-        // In case lastStep is tie but no current step was set
-        // Still need to noteOff
-        nextOff();
+        lastStep.set(step);
         currentStep = (currentStep + 1) % pattern->stepCount;
     }
 
