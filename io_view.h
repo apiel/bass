@@ -7,7 +7,6 @@
 #include "io_instrument.h"
 #include "io_util.h"
 
-// #define MAIN_VIEW_COUNT (SYNTH_COUNT + KICK_COUNT)
 #define MAIN_VIEW_COUNT (SYNTH_COUNT)
 
 byte currentView = 0;
@@ -16,26 +15,12 @@ void setCurrentView(int8_t direction) {
     currentView = mod(currentView + direction, MAIN_VIEW_COUNT);
 }
 
-// void setKickViewPos(byte pos) {
-//     currentView = pos;
-// }
-
-// void setSynthViewPos(byte pos) {
-//     Serial.println("setSynthViewPos");
-//     currentView = pos + KICK_COUNT;
-// }
-
 void setSynthViewPos(byte pos) {
     Serial.println("setSynthViewPos");
     currentView = pos;
 }
 
-// bool isKickView() { return currentView < KICK_COUNT; }
-// bool isSynthView() { return !isKickView(); }
 bool isSynthView() { return true; }
-
-// IO_AudioSynth* getSynth() { return &synth[currentView - KICK_COUNT]; }
-// IO_AudioKick* getKick() { return &kick[currentView]; }
 
 IO_AudioSynth* getSynth() { return &synth[currentView]; }
 

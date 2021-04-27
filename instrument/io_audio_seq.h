@@ -58,6 +58,23 @@ class IO_AudioSeq {
         }
     }
 
+    void toggleStep(byte pos) {
+        currentStepSelection = pos;
+        Step* pStep = &pattern->steps[pos];
+        if (!pStep->duration) {
+            pStep->duration = 1;
+            // pStep->tie = false;
+        } else {
+            pStep->duration = 0;
+            // pStep->tie = false;
+        }
+    }
+
+    void toggleTie() {
+        Step* pStep = &pattern->steps[currentStepSelection];
+        pStep->tie = !pStep->tie;
+    }
+
     void next() {
         Step* step = &pattern->steps[currentStep];
         bool triggerNoteOn = active && step->duration;

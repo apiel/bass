@@ -9,20 +9,35 @@
 
 bool defaultNoteOnHandler(byte channel, byte note, byte velocity) {
     if (note == 16 || note == 40) {
-        toggleGcMode();
+        toggleMcMode();
         return true;
     } else if (note == 8 || note == 32) {
-        setSynthViewPos(SYNTH_0);
-        return true;
+        if (!mcMode) {
+            setSynthViewPos(SYNTH_0);
+            return true;
+        }
     } else if (note == 9 || note == 33) {
-        setSynthViewPos(SYNTH_1);
-        return true;
+        if (!mcMode) {
+            setSynthViewPos(SYNTH_1);
+            return true;
+        }
     } else if (note == 10 || note == 34) {
-        setSynthViewPos(SYNTH_2);
-        return true;
+        if (!mcMode) {
+            setSynthViewPos(SYNTH_2);
+            return true;
+        }
     } else if (note == 11 || note == 35) {
-        setSynthViewPos(SYNTH_3);
-        return true;
+        if (!mcMode) {
+            setSynthViewPos(SYNTH_3);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool defaultNoteOffHandler(byte channel, byte note, byte velocity) {
+    if (note == 16 || note == 40) {
+        updateMcModeState();
     }
     return false;
 }

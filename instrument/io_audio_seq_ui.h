@@ -71,7 +71,27 @@ class IO_AudioSeqUI {
     void noteOnHandler(byte channel, byte note, byte velocity) {
         if (channel == 11) {
             if (note == 17 || note == 41) {
-                seq->setStepDurationAndTie();
+                if (mcMode) {
+                    seq->toggleTie();
+                } else {
+                    seq->setStepDurationAndTie();
+                }
+            } else if (note == 8 || note == 32) {
+                seq->toggleStep(0);
+            } else if (note == 9 || note == 33) {
+                seq->toggleStep(1);
+            } else if (note == 10 || note == 34) {
+                seq->toggleStep(2);
+            } else if (note == 11 || note == 35) {
+                seq->toggleStep(3);
+            } else if (note == 12 || note == 36) {
+                seq->toggleStep(4);
+            } else if (note == 13 || note == 37) {
+                seq->toggleStep(5);
+            } else if (note == 14 || note == 38) {
+                seq->toggleStep(6);
+            } else if (note == 15 || note == 39) {
+                seq->toggleStep(7);
             }
         }
     }
