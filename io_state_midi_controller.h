@@ -30,4 +30,13 @@ void updateMcModeStateOnMidiController() {
     }
 }
 
+bool initStateOnMidiControllerDone = false;
+void initStateOnMidiController() {
+    if (!initStateOnMidiControllerDone) {
+        initStateOnMidiControllerDone = true;
+        updateCurrentViewStateOnMidiController();
+        updateMcModeStateOnMidiController();
+    }
+}
+
 #endif

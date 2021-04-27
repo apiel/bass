@@ -145,6 +145,7 @@ class IO_AudioSeqUI {
                 }
             } else if (knob == 8) {
                 seq->setCurrentRow(direction);
+                updateMidiController();
             } else if (knob == 11) {
                 if (mcMode) {
                 } else {

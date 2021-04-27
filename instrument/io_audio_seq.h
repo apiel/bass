@@ -64,8 +64,8 @@ class IO_AudioSeq {
     }
 
     void toggleStep(byte pos) {
-        currentStepSelection = pos;
-        Step* pStep = &pattern->steps[pos];
+        currentStepSelection = pos + currentRow * 8;
+        Step* pStep = &pattern->steps[currentStepSelection];
         if (!pStep->duration) {
             pStep->duration = 1;
             // pStep->tie = false;

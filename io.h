@@ -12,6 +12,7 @@
 #include "io_pattern_storage.h"
 #include "io_sequencer.h"
 #include "io_state.h"
+#include "io_state_midi_controller.h"
 
 void ioInit() {
     // // to comment out
@@ -32,6 +33,7 @@ void ioInit() {
     sequencerInit();
 
     displayUpdate();
+    // initStateOnMidiController();
 }
 
 unsigned long last_time = millis();
@@ -40,19 +42,18 @@ void ioLoop() {
     displayLoop();
     sequencerLoop();
 
-    if (true) {
-        if (millis() - last_time >= 5000) {
-            Serial.print("Proc = ");
-            Serial.print(AudioProcessorUsage());
-            Serial.print(" (");
-            Serial.print(AudioProcessorUsageMax());
-            Serial.print("),  Mem = ");
-            Serial.print(AudioMemoryUsage());
-            Serial.print(" (");
-            Serial.print(AudioMemoryUsageMax());
-            Serial.println(")");
-            last_time = millis();
-        }
+    if (millis() - last_time >= 5000) {
+        initStateOnMidiController();
+        Serial.print("Proc = ");
+        Serial.print(AudioProcessorUsage());
+        Serial.print(" (");
+        Serial.print(AudioProcessorUsageMax());
+        Serial.print("),  Mem = ");
+        Serial.print(AudioMemoryUsage());
+        Serial.print(" (");
+        Serial.print(AudioMemoryUsageMax());
+        Serial.println(")");
+        last_time = millis();
     }
 }
 
