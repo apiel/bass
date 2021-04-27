@@ -19,6 +19,7 @@ class IO_AudioSeq {
     bool active = false;
     byte currentPattern = 0;
     byte currentStepSelection = 0;
+    byte currentRow = 0;
     Pattern* pattern;
 
     IO_AudioSeq(IO_AudioSynthCore* _core) { core = _core; }
@@ -33,6 +34,10 @@ class IO_AudioSeq {
     void setCurrentStepSelection(int8_t direction) {
         currentStepSelection =
             mod(currentStepSelection + direction, STEP_COUNT);
+    }
+
+    void setCurrentRow(int8_t direction) {
+        currentRow = mod(currentRow + direction, STEP_COUNT / 8);
     }
 
     void setStepNote(int8_t direction) {

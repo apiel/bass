@@ -36,6 +36,11 @@ class IO_AudioSeqUI {
             d->drawLine(x * 16 + 2, y * 7 + 6 + topMargin, x * 16 + 10,
                         y * 7 + 6 + topMargin, WHITE);
         }
+
+        if (mcMode && x == 7 && seq->currentRow == pos / 8) {
+            d->drawLine(x * 16 + 14, y * 7 + topMargin, x * 16 + 14,
+                        y * 7 + 7 + topMargin, WHITE);
+        }
     }
 
    public:
@@ -119,9 +124,7 @@ class IO_AudioSeqUI {
                 } else {
                 }
             } else if (knob == 8) {
-                if (mcMode) {
-                } else {
-                }
+                seq->setCurrentRow(direction);
             } else if (knob == 11) {
                 if (mcMode) {
                 } else {
