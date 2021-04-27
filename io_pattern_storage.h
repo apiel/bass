@@ -60,7 +60,7 @@ bool savePattern(byte patternPos) {
                 Step* step = &patterns[patternPos].steps[pos];
                 sprintf(storageBuffer, "%d %d %d %d %d\n", (int)pos,
                         (int)step->note, (int)step->duration,
-                        (int)step->velocity, b2i(step->slide));
+                        (int)step->velocity, b2i(step->tie));
                 file.print(storageBuffer);
             }
             file.close();

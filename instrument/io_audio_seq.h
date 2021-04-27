@@ -39,7 +39,7 @@ class IO_AudioSeq {
     void next() {
         if (lastStep.duration != 255) {
             lastStep.duration--;
-            if (!lastStep.slide) {
+            if (!lastStep.tie) {
                 nextOff();
             }
         }
@@ -54,7 +54,7 @@ class IO_AudioSeq {
                 lastStep.set(step);
             }
         }
-        // In case lastStep is a slide but no current step was set
+        // In case lastStep is tie but no current step was set
         // Still need to noteOff
         nextOff();
         currentStep = (currentStep + 1) % pattern->stepCount;

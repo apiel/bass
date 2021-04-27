@@ -40,9 +40,9 @@ class Pattern {
     }
 
     Pattern* add(byte pos, byte note, byte duration, byte velocity,
-                 bool slide) {
+                 bool tie) {
         if (pos < MAX_STEPS_IN_PATTERN) {
-            steps[pos].set(note, duration, velocity, slide);
+            steps[pos].set(note, duration, velocity, tie);
         }
         return this;
     }

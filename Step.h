@@ -10,7 +10,7 @@ class Step {
     byte note = BASE_FREQ;
     byte duration = 0;
     byte velocity = 100;
-    bool slide = false;
+    bool tie = false;
     int freqDiff = 0;
 
     Step() {}
@@ -18,7 +18,7 @@ class Step {
     void clear() { duration = 0; }
 
     void set(Step* step) {
-        set(step->note, step->duration, step->velocity, step->slide);
+        set(step->note, step->duration, step->velocity, step->tie);
     }
 
     void set(byte _note) {
@@ -36,16 +36,10 @@ class Step {
         set(_note, _duration);
     }
 
-    void set(byte _note, byte _duration, byte _velocity, bool _slide) {
-        slide = _slide;
+    void set(byte _note, byte _duration, byte _velocity, bool _tie) {
+        tie = _tie;
         set(_note, _duration, _velocity);
     }
-
-    // Step(byte _note, byte _duration, bool _slide) {
-    //     note = _note;
-    //     duration = _duration;
-    //     slide = _slide;
-    // }
 };
 
 #endif

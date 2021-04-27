@@ -59,7 +59,7 @@ class IO_AudioSeqUI {
 
         Step* step = &seq->pattern->steps[seq->currentStepSelection];
         d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
-                  step->slide ? 1 : 0);
+                  step->tie ? 1 : 0);
 
         setSmallFont(d);
         for (byte pos = 0; pos < STEP_COUNT; pos++) {

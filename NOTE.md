@@ -1,6 +1,3 @@
-- effect
-    - add more effect
-
 - edit pattern
 - pattern remove duration. only use slide/tie
 - save pattern
