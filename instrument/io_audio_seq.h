@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "../Pattern.h"
+#include "../io_config.h"
 #include "../io_pattern_storage.h"
 #include "./io_audio_synth_core.h"
 
@@ -27,6 +28,34 @@ class IO_AudioSeq {
     void setCurrentPattern(int8_t direction) {
         currentPattern += direction;
         pattern = &patterns[currentPattern];
+    }
+
+    void setCurrentStepSelection(int8_t direction) {
+        currentStepSelection =
+            mod(currentStepSelection + direction, STEP_COUNT);
+    }
+
+    void setStepNote(int8_t direction) {
+        Step* pStep = &pattern->steps[currentStepSelection];
+        pStep->set(constrain(pStep->note + direction, _C0, _B8));
+    }
+
+    void setStepVelocity(int8_t direction) {
+        Step* pStep = &pattern->steps[currentStepSelection];
+        pStep->velocity = constrain(pStep->velocity + direction, 0, 127);
+    }
+
+    void setStepDurationAndTie() {
+        Step* pStep = &pattern->steps[currentStepSelection];
+        if (!pStep->duration) {
+            pStep->duration = 1;
+            pStep->tie = false;
+        } else if (pStep->tie) {
+            pStep->duration = 0;
+            pStep->tie = false;
+        } else {
+            pStep->tie = true;
+        }
     }
 
     void next() {

@@ -26,12 +26,9 @@ class IO_AudioSeqUI {
             d->printf("%s%d", getNoteDot(step->note),
                       getNoteOctave(step->note));
 
-            // this show the duration but will be buggy when note go on the next
-            // line need to think about a solution
-            for (byte duration = 1; duration < step->duration; duration++) {
-                d->drawLine(duration * (x + 1) * 16 - 4, y * 7 + 6 + topMargin,
-                            duration * (x + 1) * 16 - 4 + 5,
-                            y * 7 + 6 + topMargin, WHITE);
+            if (step->tie) {
+                d->drawLine(x * 16 + 12, y * 7 + 3 + topMargin, x * 16 + 12,
+                            y * 7 + 7 + topMargin, WHITE);
             }
         }
 
@@ -42,9 +39,7 @@ class IO_AudioSeqUI {
     }
 
    public:
-    IO_AudioSeqUI(IO_AudioSeq* _seq) {
-        seq = _seq;
-    }
+    IO_AudioSeqUI(IO_AudioSeq* _seq) { seq = _seq; }
 
     void displayPlayingStatus(Adafruit_SSD1306* d) {
         if (seq->active) {
@@ -58,8 +53,13 @@ class IO_AudioSeqUI {
         d->printf("%03d %s\n", seq->currentPattern, seq->pattern->name);
 
         Step* step = &seq->pattern->steps[seq->currentStepSelection];
-        d->printf("\nD: %d V: %03d S: %d\n", step->duration, step->velocity,
-                  step->tie ? 1 : 0);
+        if (step->duration) {
+            d->printf("\n%s%d %03d Tie %d\n", getNoteStr(step->note),
+                      getNoteOctave(step->note), step->velocity,
+                      step->tie ? 1 : 0);
+        } else {
+            d->printf("\n-- %03d Tie %d\n", step->velocity, step->tie ? 1 : 0);
+        }
 
         setSmallFont(d);
         for (byte pos = 0; pos < STEP_COUNT; pos++) {
@@ -70,9 +70,9 @@ class IO_AudioSeqUI {
 
     void noteOnHandler(byte channel, byte note, byte velocity) {
         if (channel == 11) {
-            // if (note == 22 || note == 46) {
-            //     seq->toggle();
-            // }
+            if (note == 17 || note == 41) {
+                seq->setStepDurationAndTie();
+            }
         }
     }
 
@@ -81,17 +81,11 @@ class IO_AudioSeqUI {
             if (knob == 1) {
                 seq->setCurrentPattern(direction);
             } else if (knob == 2) {
-                if (mcMode) {
-                } else {
-                }
+                seq->setCurrentStepSelection(direction);
             } else if (knob == 3) {
-                if (mcMode) {
-                } else {
-                }
+                seq->setStepNote(direction);
             } else if (knob == 4) {
-                if (mcMode) {
-                } else {
-                }
+                seq->setStepVelocity(direction);
             } else if (knob == 5) {
                 if (mcMode) {
                 } else {
