@@ -10,12 +10,15 @@
 #include "../wavetable/AudioWaveTable.h"
 #include "../wavetable/AudioWaveTableList.h"
 
-class IO_AudioSynthWave : public AudioDumb {
+class IO_AudioSynthWave {
    public:
+    AudioStream* input;
+    AudioStream* output;
     AudioWaveTable waveTable;
     AudioSynthWaveformModulated waveForm;
     AudioWaveTableList waveList;
-    AudioDumb input;
+    AudioDumb dumpIn;
+    AudioMixer4 mixer;
 
     uint16_t currentWave = 0;
     char* waveName;
@@ -23,22 +26,21 @@ class IO_AudioSynthWave : public AudioDumb {
     float frequency = NOTE_FREQ[_C4];
     float amplitude = 1.0;
 
-    AudioConnection* patchCordInputToWaveTable;
-    AudioConnection* patchCordWaveTableToDumb;
-
-    AudioConnection* patchCordInputToWaveForm;
-    AudioConnection* patchCordWaveFormToDumb;
+    AudioConnection* patchCord[4];
 
     IO_AudioSynthWave() {
-        patchCordInputToWaveTable = new AudioConnection(input, waveTable);
-        patchCordWaveTableToDumb = new AudioConnection(waveTable, *this);
-
-        patchCordInputToWaveForm = new AudioConnection(input, waveForm);
-        patchCordWaveFormToDumb = new AudioConnection(waveForm, *this);
+        // input = &waveForm;
+        // output = &waveForm;
+        input = &dumpIn;
+        output = &mixer;
+        patchCord[0] = new AudioConnection(dumpIn, waveTable);
+        patchCord[1] = new AudioConnection(dumpIn, waveForm);
+        patchCord[3] = new AudioConnection(waveTable, mixer);
+        patchCord[4] = new AudioConnection(waveForm, 0, mixer, 1);
+        setNextWaveform(0);
 
         setFrequency(0);
         setAmplitude(0);
-        setNextWaveform(0);
 
         waveForm.arbitraryWaveform(waveList.getTable(0)->table, 172.0);
         waveForm.begin(0);
@@ -104,15 +106,11 @@ class IO_AudioSynthWave : public AudioDumb {
     void applyCord() {
         // will use something else
         if (isWaveForm() || isWaveArbitrary()) {
-            patchCordInputToWaveTable->disconnect();
-            patchCordWaveTableToDumb->disconnect();
-            patchCordInputToWaveForm->connect();
-            patchCordWaveFormToDumb->connect();
+            mixer.gain(0, 0.0);
+            mixer.gain(1, 1.0);
         } else {
-            patchCordInputToWaveForm->disconnect();
-            patchCordWaveFormToDumb->disconnect();
-            patchCordInputToWaveTable->connect();
-            patchCordWaveTableToDumb->connect();
+            mixer.gain(0, 1.0);
+            mixer.gain(1, 0.0);
         }
     }
 };

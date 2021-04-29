@@ -40,8 +40,8 @@ class IO_AudioSynthCore : public AudioDumb {
     Guitar01 table;
 
     IO_AudioSynthCore() {
-        patchCordFreqModToWave = new AudioConnection(freqMod, wave.input);
-        patchCordWaveToEnv = new AudioConnection(wave, env);
+        patchCordFreqModToWave = new AudioConnection(freqMod, *wave.input);
+        patchCordWaveToEnv = new AudioConnection(*wave.output, env);
         patchCordEnvToFilter = new AudioConnection(env, filter.input);
         patchCordFilterToEffect = new AudioConnection(filter, effect.input);
         patchCordEffectToOutput = new AudioConnection(effect, *this);
